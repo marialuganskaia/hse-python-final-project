@@ -1,16 +1,11 @@
-"""
-Черновые доменные модели.
-Классы будут дополнены полями после согласования с командой.
-"""
-
 from enum import Enum
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 from dataclasses import dataclass, field
 
 
 class UserRole(str, Enum):
-    """Роли пользователей (предварительно)"""
+    """Роли пользователей"""
     PARTICIPANT = "participant"
     ORGANIZER = "organizer"
 
@@ -53,7 +48,7 @@ class Hackathon:
 
 @dataclass
 class Event:
-    """Событие в расписании хакатона."""
+    """Событие в расписании хакатона"""
     hackathon_id: int # Внешний ключ на Hackathon.id
     title: str
     id: Optional[int] = None
@@ -65,7 +60,7 @@ class Event:
 
 @dataclass
 class FAQItem:
-    """Вопрос-ответ для хакатона."""
+    """Вопрос-ответ для хакатона"""
     hackathon_id: int # Внешний ключ на Hackathon.id
     question: str
     answer: str
@@ -74,7 +69,7 @@ class FAQItem:
 
 @dataclass
 class Rules:
-    """Правила и критерии оценки хакатона."""
+    """Правила и критерии оценки хакатона"""
     hackathon_id: int  # Внешний ключ на Hackathon.id
     content: str
     id: Optional[int] = None
@@ -82,7 +77,7 @@ class Rules:
 
 @dataclass
 class ReminderSubscription:
-    """Подписка на напоминания о событиях."""
+    """Подписка на напоминания о событиях"""
     user_id: int # Внешний ключ на User.id
     hackathon_id: int  # Внешний ключ на Hackathon.id
     id: Optional[int] = None
