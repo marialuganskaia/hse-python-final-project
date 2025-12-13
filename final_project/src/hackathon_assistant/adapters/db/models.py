@@ -1,8 +1,18 @@
-from sqlalchemy import Column, Integer, BigInteger, String, ForeignKey, Enum
-from sqlalchemy import Text, DateTime, Boolean, Index
-from sqlalchemy.orm import relationship, declarative_base
-from ...domain.models import UserRole, EventType
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.orm import declarative_base
 
+from ...domain.models import EventType, UserRole
 
 Base = declarative_base()
 
@@ -61,6 +71,4 @@ class ReminderSubscriptionORM(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     hackathon_id = Column(Integer, ForeignKey("hackathons.id"), nullable=False)
     enabled = Column(Boolean, default=True)
-    __table_args__ = (
-        Index('uq_user_hackathon', 'user_id', 'hackathon_id', unique=True),
-    )
+    __table_args__ = (Index("uq_user_hackathon", "user_id", "hackathon_id", unique=True),)

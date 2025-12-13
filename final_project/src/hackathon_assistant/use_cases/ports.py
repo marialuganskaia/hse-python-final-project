@@ -2,15 +2,16 @@
 Черновые интерфейсы репозиториев.
 На основе сценариев из документации.
 """
-from typing import Protocol, Optional, List
-from datetime import datetime
-from ..domain.models import User, Hackathon, Event, FAQItem, Rules, ReminderSubscription
+
+from typing import Protocol
+
+from ..domain.models import Event, FAQItem, Hackathon, ReminderSubscription, Rules, User
 
 
 class UserRepository(Protocol):
     """Для сценариев: /start (регистрация), /hackathon (смена), /admin_stats"""
 
-    async def get_by_telegram_id(self, telegram_id: int) -> Optional[User]:
+    async def get_by_telegram_id(self, telegram_id: int) -> User | None:
         """Найти пользователя по telegram_id (для /start)."""
         ...
 
@@ -34,7 +35,7 @@ class UserRepository(Protocol):
 class HackathonRepository(Protocol):
     """Для сценариев: /start (выбор), /hackathon (список), /schedule, /rules, /faq"""
 
-    async def get_by_code(self, code: str) -> Optional[Hackathon]:
+    async def get_by_code(self, code: str) -> Hackathon | None:
         """Найти хакатон по коду (выбор по коду в /start)."""
         ...
 
@@ -70,7 +71,7 @@ class FAQRepository(Protocol):
 class RulesRepository(Protocol):
     """Для сценариев: /rules"""
 
-    async def get_for_hackathon(self, hackathon_id: int) -> Optional[Rules]:
+    async def get_for_hackathon(self, hackathon_id: int) -> Rules | None:
         """Получить правила хакатона (/rules)."""
         ...
 
@@ -78,7 +79,9 @@ class RulesRepository(Protocol):
 class SubscriptionRepository(Protocol):
     """Для сценариев: /notify_on, /notify_off, напоминания, /admin_stats"""
 
-    async def get_user_subscription(self, user_id: int, hackathon_id: int) -> Optional[ReminderSubscription]:
+    async def get_user_subscription(
+        self, user_id: int, hackathon_id: int
+    ) -> ReminderSubscription | None:
         """Получить подписку пользователя на хакатон (/notify_on/off)."""
         ...
 
