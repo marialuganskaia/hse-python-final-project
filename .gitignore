@@ -12,3 +12,12 @@ venv/
 
 # env
 .env
+
+# packaging artifacts
+*.egg-info/
+dist/
+build/
+
+# macOS
+.DS_Store
+._*

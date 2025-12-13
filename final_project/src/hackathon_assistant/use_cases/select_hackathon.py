@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Optional
-from .ports import UserRepository, HackathonRepository
+
 from ..domain.models import Hackathon
+from .ports import HackathonRepository, UserRepository
 
 
 @dataclass
@@ -12,10 +12,11 @@ class SelectHackathonByCodeUseCase:
     1) Переходит по ссылке t.me/bot?start=CODE
     2) вводит код после регистрации
     """
+
     user_repo: UserRepository
     hackathon_repo: HackathonRepository
 
-    async def execute(self, telegram_id: int, hackathon_code: str) -> Optional[Hackathon]:
+    async def execute(self, telegram_id: int, hackathon_code: str) -> Hackathon | None:
         """Привязка пользователя к хакатону по коду
         На вход
             telegram_id: ID пользователя в tg
