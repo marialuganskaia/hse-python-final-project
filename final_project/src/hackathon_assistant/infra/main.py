@@ -3,39 +3,47 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from .db import db_ping
+from aiogram import Bot, Dispatcher
+
+from ..adapters.bot.middlewares.usecases import UseCasesMiddleware
+from ..adapters.bot.routers import setup_routers
+from .db import db_ping, get_session
 from .settings import get_settings
+from .usecase_provider import build_use_case_provider
 
 logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
     """
-    Application entrypoint.
-
-    План инициализации:
-      1) settings (env/.env)
-      2) init DB: async engine + sessionmaker (lazy in infra/db.py)
-      3) init repositories (adapters/db)       (Dev2)
-      4) init use-cases provider (infra wiring) (Dev1 later)
-      5) init bot: Bot + Dispatcher + routers  (Dev3)
-      6) init scheduler for reminders          (Dev1 later)
-      7) start polling
+    Entrypoint (skeleton).
+    Сейчас: settings + db_ping + wiring middleware + роутеры.
+    Позже: scheduler + полноценные handlers + репозитории Dev2.
     """
     settings = get_settings()
     logger.info("Starting app. DATABASE_URL=%s", settings.database_url)
 
-    ok = await db_ping()
-    if not ok:
+    if not await db_ping():
         logger.error("DB ping failed. Check DATABASE_URL and DB availability.")
         return
-
     logger.info("DB ping OK.")
 
-    # TODO(Dev2): repositories implementations (SQLAlchemy adapters)
-    # TODO(Dev1): use-cases provider wiring (DI)
-    # TODO(Dev3): routers registration
-    # TODO(Dev1): scheduler integration
+    bot = Bot(token=settings.bot_token)
+    dp = Dispatcher()
+
+    # use cases per update: session -> UseCaseProvider -> handler data["use_cases"]
+    dp.update.outer_middleware(
+        UseCasesMiddleware(
+            session_cm_factory=get_session,
+            provider_factory=build_use_case_provider,
+            data_key="use_cases",
+        )
+    )
+
+    setup_routers(dp)
+
+    # Пока Dev3 не сделал хендлеры, polling можно запускать, но командами бот не ответит.
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":

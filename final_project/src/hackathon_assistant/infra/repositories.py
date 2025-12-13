@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..use_cases.ports import HackathonRepository, UserRepository
+
 
 @dataclass(frozen=True)
 class RepositoryProvider:
@@ -15,6 +17,12 @@ class RepositoryProvider:
     """
 
     session: AsyncSession
+
+    def user_repo(self) -> UserRepository:
+        raise NotImplementedError("Dev2: implement SQLAlchemy UserRepository and wire here")
+
+    def hackathon_repo(self) -> HackathonRepository:
+        raise NotImplementedError("Dev2: implement SQLAlchemy HackathonRepository and wire here")
 
     # Примеры -- заглушки:
     # def user_repo(self) -> UserRepository: ...
