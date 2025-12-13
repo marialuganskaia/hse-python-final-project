@@ -12,3 +12,8 @@ venv/
 
 # env
 .env
+
+# packaging artifacts
+*.egg-info/
+dist/
+build/
