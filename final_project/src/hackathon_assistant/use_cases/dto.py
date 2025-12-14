@@ -41,3 +41,22 @@ class BroadcastTargetDTO:
     telegram_id: int
     username: str = ""
     first_name: str = ""
+
+@dataclass
+class HackathonDTO:
+    """DTO для информации о хакатоне"""
+    name: str
+    start_date: datetime
+    end_date: datetime
+    description: Optional[str] = None
+    location: Optional[str] = None
+    code: Optional[str] = None
+
+
+@dataclass
+class BroadcastResultDTO:
+    """DTO для результата рассылки"""
+    total_recipients: int
+    sent_successfully: int
+    failed: int
+    success_rate: float
