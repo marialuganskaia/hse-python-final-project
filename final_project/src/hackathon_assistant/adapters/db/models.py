@@ -46,6 +46,7 @@ class EventORM(Base):
     title = Column(String(255), nullable=False)
     type = Column(Enum(EventType), nullable=False)
     starts_at = Column(DateTime, nullable=False)
+    ends_at = Column(DateTime, nullable=False)
     location = Column(String(255))
     description = Column(Text)
 
