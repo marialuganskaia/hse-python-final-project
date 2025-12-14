@@ -31,6 +31,14 @@ class UserRepository(Protocol):
         """Подсчитать пользователей по хакатону (/admin_stats)"""
         ...
 
+    async def get_all(self) -> list[User]:
+        """Получить всех пользователей"""
+        ...
+
+    async def get_by_hackathon(self, hackathon_id: int) -> list[User]:
+        """Получить пользователей по хакатону"""
+        ...
+
 
 class HackathonRepository(Protocol):
     """Для сценариев: /start (выбор), /hackathon (список), /schedule, /rules, /faq"""
@@ -43,9 +51,13 @@ class HackathonRepository(Protocol):
         """Получить все активные хакатоны (список для выбора в /hackathon)"""
         ...
 
-    # async def get_by_id(self, hackathon_id: int) -> Optional[Hackathon]
-    #     """Получить хакатон по ID (для получения текущего хакатона пользователя)."""
-    #     ... вопрос в избыточности????
+    async def get_by_id(self, hackathon_id: int) -> Hackathon | None:
+        """Получить хакатон по ID"""
+        ...
+
+    async def save(self, hackathon: Hackathon) -> Hackathon:
+        """Сохранить хакатон (создать или обновить)"""
+        ...
 
 
 class EventRepository(Protocol):
@@ -104,3 +116,8 @@ class SubscriptionRepository(Protocol):
     async def save(self, subscription: ReminderSubscription) -> ReminderSubscription:
         """Сохранить подписку (сохранить или обновить)"""
         ...
+
+    async def get_by_hackathon(self, hackathon_id: int) -> list[ReminderSubscription]:
+        """Получить все подписки по хакатону"""
+        ...
+
