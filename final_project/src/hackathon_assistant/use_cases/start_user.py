@@ -1,19 +1,18 @@
 from dataclasses import dataclass
-from typing import Optional
-from .ports import UserRepository
+
 from ..domain.models import User, UserRole
+from .ports import UserRepository
 
 
 @dataclass
 class StartUserUseCase:
     """Use case для команды /start"""
+
     user_repo: UserRepository
 
-    async def execute(self,
-                      telegram_id: int,
-                      username: str = "",
-                      first_name: str = "",
-                      last_name: str = "") -> User:
+    async def execute(
+        self, telegram_id: int, username: str = "", first_name: str = "", last_name: str = ""
+    ) -> User:
         """Зарегистрировать пользователя или обновить его данные
         На вход получаем
             telegram_id: ID пользователя в tg
@@ -32,7 +31,8 @@ class StartUserUseCase:
                 first_name=first_name,
                 last_name=last_name,
                 role=UserRole.PARTICIPANT,
-                current_hackathon_id=None)
+                current_hackathon_id=None,
+            )
         else:
             # Обновляем данные (могло измениться имя)
             user.username = username

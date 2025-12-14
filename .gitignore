@@ -12,3 +12,18 @@ venv/
 
 # env
 .env
+
+# packaging artifacts
+*.egg-info/
+dist/
+build/
+
+# macOS
+.DS_Store
+._*
+
+# IDE
+.idea/
+
+# Database
+hackathon_bot.db
