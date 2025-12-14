@@ -21,3 +21,9 @@ build/
 # macOS
 .DS_Store
 ._*
+
+# IDE
+.idea/
+
+# Database
+hackathon_bot.db

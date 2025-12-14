@@ -55,6 +55,7 @@ class Event:
 
     hackathon_id: int  # Внешний ключ на Hackathon.id
     title: str
+    ends_at: datetime
     id: int | None = None
     type: EventType = EventType.OTHER
     starts_at: datetime = field(default_factory=datetime.now)
