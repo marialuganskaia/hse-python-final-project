@@ -24,3 +24,20 @@ class FAQItemDTO:
     """DTO для FAQ"""
     question: str
     answer: str
+
+
+@dataclass
+class AdminStatsDTO:
+    """DTO для статистики администратора"""
+    total_users: int
+    participants: int
+    organizers: int
+    subscribed_users: int
+
+@dataclass
+class BroadcastTargetDTO:
+    """DTO для цели рассылки"""
+    user_id: int
+    telegram_id: int
+    username: str = ""
+    first_name: str = ""

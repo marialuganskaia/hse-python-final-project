@@ -7,7 +7,6 @@ from .ports import HackathonRepository, UserRepository
 @dataclass
 class SelectHackathonByCodeUseCase:
     """
-    Use case для выбора хакатона по коду
     Используется когда пользователь:
     1) Переходит по ссылке t.me/bot?start=CODE
     2) вводит код после регистрации
