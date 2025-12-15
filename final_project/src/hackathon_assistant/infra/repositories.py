@@ -35,11 +35,11 @@ class RepositoryProvider:
     def event_repo(self) -> EventRepository:
         return EventRepo(self.session)
 
-    def faq_repo(self) -> FAQRepository:
-        return FAQRepo(self.session)
-
     def rules_repo(self) -> RulesRepository:
         return RulesRepo(self.session)
+
+    def faq_repo(self) -> FAQRepository:
+        return FAQRepo(self.session)
 
     def subscription_repo(self) -> SubscriptionRepository:
         return SubscriptionRepo(self.session)

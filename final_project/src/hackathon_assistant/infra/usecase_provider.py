@@ -4,19 +4,19 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..use_cases.finish_hackathon import FinishHackathonUseCase
+
+# TODO: добавить когда будут готовы:
+# from ..use_cases.get_hackathon_info import GetHackathonInfoUseCase
+from ..use_cases.get_admin_stats import GetAdminStatsUseCase
 from ..use_cases.get_faq import GetFAQUseCase
 from ..use_cases.get_rules import GetRulesUseCase
 from ..use_cases.get_schedule import GetScheduleUseCase
 from ..use_cases.list_hackathons import ListHackathonsUseCase
 from ..use_cases.notifications import SubscribeNotificationsUseCase, UnsubscribeNotificationsUseCase
 from ..use_cases.select_hackathon import SelectHackathonByCodeUseCase
+from ..use_cases.send_broadcast import SendBroadcastUseCase
 from ..use_cases.start_user import StartUserUseCase
-
-# TODO: добавить когда будут готовы:
-# from ..use_cases.get_hackathon_info import GetHackathonInfoUseCase
-# from ..use_cases.get_admin_stats import GetAdminStatsUseCase
-# from ..use_cases.send_broadcast import SendBroadcastUseCase
-# from ..use_cases.finish_hackathon import FinishHackathonUseCase
 from .repositories import RepositoryProvider
 
 
@@ -70,5 +70,18 @@ def build_use_case_provider(session: AsyncSession) -> UseCaseProvider:
         ),
         list_hackathons=ListHackathonsUseCase(
             hackathon_repo=repos.hackathon_repo(),
+        ),
+        get_admin_stats=GetAdminStatsUseCase(
+            user_repo=repos.user_repo(),
+            subscription_repo=repos.subscription_repo(),
+            hackathon_repo=repos.hackathon_repo(),
+        ),
+        send_broadcast=SendBroadcastUseCase(
+            user_repo=repos.user_repo(),
+            subscription_repo=repos.subscription_repo(),
+        ),
+        finish_hackathon=FinishHackathonUseCase(
+            hackathon_repo=repos.hackathon_repo(),
+            subscription_repo=repos.subscription_repo(),
         ),
     )
