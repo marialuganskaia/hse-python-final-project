@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional
-from .ports import UserRepository, SubscriptionRepository, HackathonRepository
-from .dto import AdminStatsDTO
+
 from ..domain.models import UserRole
+from .dto import AdminStatsDTO
+from .ports import HackathonRepository, SubscriptionRepository, UserRepository
 
 
 @dataclass
@@ -11,7 +11,7 @@ class GetAdminStatsUseCase:
     subscription_repo: SubscriptionRepository
     hackathon_repo: HackathonRepository
 
-    async def execute(self, hackathon_id: int) -> Optional[AdminStatsDTO]:
+    async def execute(self, hackathon_id: int) -> AdminStatsDTO | None:
         """Получить статистику для администратора
         Возвращает AdminStatsDTO: статистика по пользователям, подпискам
         """

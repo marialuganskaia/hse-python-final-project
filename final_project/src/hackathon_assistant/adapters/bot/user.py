@@ -1,5 +1,6 @@
 from aiogram import Router, types
 from aiogram.filters import Command
+
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
 from datetime import datetime, timedelta
 
@@ -18,6 +19,7 @@ user_router = Router(name="user_router")
 
 
 # ========== Основные команды ==========
+
 
 @user_router.message(Command("start"))
 async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
@@ -64,6 +66,7 @@ async def cmd_hackathon(message: types.Message, use_cases: UseCaseProvider) -> N
 
 
 # ========== Информационные команды ==========
+
 
 @user_router.message(Command("schedule"))
 async def cmd_schedule(message: types.Message, use_cases: UseCaseProvider) -> None:
@@ -135,6 +138,7 @@ async def cmd_faq(message: types.Message, use_cases: UseCaseProvider) -> None:
 
 
 # ========== Уведомления ==========
+
 
 @user_router.message(Command("notify_on"))
 async def cmd_notify_on(message: types.Message, use_cases: UseCaseProvider) -> None:

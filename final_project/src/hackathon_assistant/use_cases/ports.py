@@ -3,15 +3,13 @@
 На основе сценариев из документации
 """
 
-from typing import Protocol
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Optional
+from typing import Protocol
 
 from ..domain.models import Event, FAQItem, Hackathon, ReminderSubscription, Rules, User
 
-
 # ========== Репозитории ==========
+
 
 class UserRepository(Protocol):
     """Для сценариев: /start (регистрация), /hackathon (смена), /admin_stats"""
@@ -129,62 +127,72 @@ class SubscriptionRepository(Protocol):
 
 # ========== Request/Response модели для use cases ==========
 
+
 @dataclass
 class StartRequest:
     """Запрос для команды /start"""
+
     telegram_id: int
-    username: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    username: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
 
 
 @dataclass
 class StartResponse:
     """Ответ для команды /start"""
+
     welcome_message: str
     user_id: int
-    hackathon_id: Optional[int] = None
+    hackathon_id: int | None = None
 
 
 @dataclass
 class ScheduleRequest:
     """Запрос для команды /schedule"""
+
     user_id: int
 
 
 @dataclass
 class ScheduleResponse:
     """Ответ для команды /schedule"""
+
     events: list[Event]
 
 
 @dataclass
 class RulesRequest:
     """Запрос для команды /rules"""
+
     user_id: int
 
 
 @dataclass
 class RulesResponse:
     """Ответ для команды /rules"""
+
     rules: Rules
 
 
 @dataclass
 class FAQRequest:
     """Запрос для команды /faq"""
+
     user_id: int
 
 
 @dataclass
 class FAQResponse:
     """Ответ для команды /faq"""
+
     faq_items: list[FAQItem]
 
 
 @dataclass
 class NotificationToggleRequest:
     """Запрос для команд /notify_on, /notify_off"""
+
     user_id: int
     enable: bool
 
@@ -192,6 +200,7 @@ class NotificationToggleRequest:
 @dataclass
 class NotificationToggleResponse:
     """Ответ для команд /notify_on, /notify_off"""
+
     success: bool
     current_status: bool
 
@@ -199,12 +208,14 @@ class NotificationToggleResponse:
 @dataclass
 class AdminStatsRequest:
     """Запрос для команды /admin_stats"""
+
     admin_user_id: int
 
 
 @dataclass
 class AdminStatsResponse:
     """Ответ для команды /admin_stats"""
+
     total_users: int
     users_in_current_hackathon: int
     subscribed_users: int
@@ -213,6 +224,7 @@ class AdminStatsResponse:
 @dataclass
 class BroadcastRequest:
     """Запрос для команды /admin_broadcast"""
+
     admin_user_id: int
     message: str
 
@@ -220,5 +232,6 @@ class BroadcastRequest:
 @dataclass
 class BroadcastResponse:
     """Ответ для команды /admin_broadcast"""
+
     sent_count: int
     failed_count: int

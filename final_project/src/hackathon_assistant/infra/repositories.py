@@ -23,7 +23,7 @@ class RepositoryProvider:
     session: AsyncSession
 
     def user_repo(self) -> UserRepository:
-        raise NotImplementedError("Dev2: implement SQLAlchemy UserRepository and wire here")
+        return UserRepo(self.session)
 
     def hackathon_repo(self) -> HackathonRepository:
         raise NotImplementedError("Dev2: implement SQLAlchemy HackathonRepository and wire here")
