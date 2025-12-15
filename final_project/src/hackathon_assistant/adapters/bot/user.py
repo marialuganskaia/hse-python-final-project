@@ -26,7 +26,7 @@ user_router = Router(name="user_router")
 async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
     """Обработчик команды /start"""
     try:
-        _user = await use_cases.start_user.execute(
+        __user = await use_cases.start_user.execute(
             telegram_id=message.from_user.id,
             username=message.from_user.username,
             first_name=message.from_user.first_name,

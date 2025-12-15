@@ -47,8 +47,8 @@ async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider
         await message.answer("Использование: /admin_broadcast <hack_code> <текст сообщения>")
         return
 
-    _hack_code = command_parts[1]
-    _broadcast_message = command_parts[2]
+    __hack_code = command_parts[1]
+    __broadcast_message = command_parts[2]
 
     await message.answer("Рассылка пока не реализована.")
 
@@ -88,7 +88,7 @@ async def process_broadcast_message(
 ):
     try:
         data = await state.get_data()
-        _hackathon_id = data.get("hackathon_id")
+        __hackathon_id = data.get("hackathon_id")
         await state.update_data(message_text=message.text)
 
         hackathon_name = "Хакатон 2024"
@@ -119,7 +119,7 @@ async def confirm_broadcast(
 ):
     try:
         data = await state.get_data()
-        _hackathon_id = data.get("hackathon_id")
+        __hackathon_id = data.get("hackathon_id")
         message_text = data.get("message_text")
 
         await callback.message.edit_text("🔄 *Отправка рассылки...*", parse_mode="Markdown")
@@ -155,7 +155,7 @@ async def handle_broadcast_actions(callback: types.CallbackQuery, state: FSMCont
 
     if action == "broadcast_edit":
         data = await state.get_data()
-        _hackathon_id = data.get("hackathon_id")
+        __hackathon_id = data.get("hackathon_id")
 
         hackathon_name = "Хакатон 2024"
         user_count = 156
