@@ -4,42 +4,39 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..adapters.db.repositories import (
-    EventRepo,
-    FAQRepo,
-    HackathonRepo,
-    RulesRepo,
-    SubscriptionRepo,
-    UserRepo,
-)
 from ..use_cases.ports import (
+    HackathonRepository, 
+    UserRepository,
     EventRepository,
     FAQRepository,
-    HackathonRepository,
     RulesRepository,
-    SubscriptionRepository,
-    UserRepository,
+    SubscriptionRepository
 )
 
 
 @dataclass(frozen=True)
 class RepositoryProvider:
+    """
+    Repository provider (infra wiring).
+    """
+
     session: AsyncSession
 
     def user_repo(self) -> UserRepository:
         return UserRepo(self.session)
 
     def hackathon_repo(self) -> HackathonRepository:
-        return HackathonRepo(self.session)
+        raise NotImplementedError("Dev2: implement SQLAlchemy HackathonRepository and wire here")
 
+    # ДОБАВЬ ЭТИ МЕТОДЫ:
     def event_repo(self) -> EventRepository:
-        return EventRepo(self.session)
-
-    def faq_repo(self) -> FAQRepository:
-        return FAQRepo(self.session)
+        raise NotImplementedError("Dev2: implement SQLAlchemy EventRepository and wire here")
 
     def rules_repo(self) -> RulesRepository:
-        return RulesRepo(self.session)
+        raise NotImplementedError("Dev2: implement SQLAlchemy RulesRepository and wire here")
+
+    def faq_repo(self) -> FAQRepository:
+        raise NotImplementedError("Dev2: implement SQLAlchemy FAQRepository and wire here")
 
     def subscription_repo(self) -> SubscriptionRepository:
-        return SubscriptionRepo(self.session)
+        raise NotImplementedError("Dev2: implement SQLAlchemy SubscriptionRepository and wire here")
