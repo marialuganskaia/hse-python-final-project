@@ -1,15 +1,14 @@
-from typing import Optional
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
 
 
 async def is_organizer(telegram_id: int, use_cases: UseCaseProvider) -> bool:
     """
     Проверяет, является ли пользователь организатором
-    
+
     Args:
         telegram_id: ID пользователя в Telegram
         use_cases: провайдер use cases
-        
+
     Returns:
         True если пользователь организатор, False в противном случае
     """
@@ -20,14 +19,14 @@ async def is_organizer(telegram_id: int, use_cases: UseCaseProvider) -> bool:
         return False
 
 
-async def get_current_hackathon_id(telegram_id: int, use_cases: UseCaseProvider) -> Optional[int]:
+async def get_current_hackathon_id(telegram_id: int, use_cases: UseCaseProvider) -> int | None:
     """
     Получает ID текущего хакатона пользователя
-    
+
     Args:
         telegram_id: ID пользователя в Telegram
         use_cases: провайдер use cases
-        
+
     Returns:
         ID хакатона или None
     """
