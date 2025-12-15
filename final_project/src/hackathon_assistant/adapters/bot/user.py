@@ -1,19 +1,20 @@
+from datetime import datetime, timedelta
+
 from aiogram import Router, types
 from aiogram.filters import Command
 
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
-from datetime import datetime, timedelta
+from hackathon_assistant.use_cases.dto import ScheduleItemDTO
 
 from .formatters import (
-    format_welcome_message,
-    format_help_message,
-    format_schedule,
     format_faq,
-    format_rules,
     format_hackathon_info,
+    format_help_message,
     format_notification_status,
+    format_rules,
+    format_schedule,
+    format_welcome_message,
 )
-from hackathon_assistant.use_cases.dto import ScheduleItemDTO
 
 user_router = Router(name="user_router")
 
@@ -25,7 +26,7 @@ user_router = Router(name="user_router")
 async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
     """Обработчик команды /start"""
     try:
-        user = await use_cases.start_user.execute(
+        _user = await use_cases.start_user.execute(
             telegram_id=message.from_user.id,
             username=message.from_user.username,
             first_name=message.from_user.first_name,
@@ -50,14 +51,14 @@ async def cmd_hackathon(message: types.Message, use_cases: UseCaseProvider) -> N
     """Обработчик команды /hackathon"""
     try:
         hackathons = await use_cases.list_hackathons.execute(active_only=True)
-        
+
         if not hackathons:
             await message.answer("Сейчас нет активных хакатонов.")
             return
-        
+
         first_hackathon = hackathons[0]
         is_subscribed = False
-        
+
         hackathon_text = format_hackathon_info(first_hackathon, is_subscribed)
         await message.answer(hackathon_text, parse_mode="Markdown")
     except Exception as e:
@@ -73,7 +74,7 @@ async def cmd_schedule(message: types.Message, use_cases: UseCaseProvider) -> No
     """Обработчик команды /schedule"""
     try:
         schedule_items = await use_cases.get_schedule.execute(message.from_user.id)
-        
+
         if not schedule_items:
             # Тестовые данные если расписание пустое
             test_items = [
@@ -82,20 +83,20 @@ async def cmd_schedule(message: types.Message, use_cases: UseCaseProvider) -> No
                     starts_at=datetime.now() + timedelta(hours=1),
                     ends_at=datetime.now() + timedelta(hours=2),
                     location="Главный холл",
-                    description="Регистрация и выдача бейджей"
+                    description="Регистрация и выдача бейджей",
                 ),
                 ScheduleItemDTO(
                     title="Открытие хакатона",
                     starts_at=datetime.now() + timedelta(hours=3),
                     ends_at=datetime.now() + timedelta(hours=4),
                     location="Аудитория 101",
-                    description="Приветственная речь организаторов"
+                    description="Приветственная речь организаторов",
                 ),
             ]
             schedule_text = format_schedule(test_items)
         else:
             schedule_text = format_schedule(schedule_items)
-            
+
         await message.answer(schedule_text, parse_mode="Markdown")
     except Exception as e:
         print(f"Error in /schedule: {e}")
@@ -106,7 +107,7 @@ async def cmd_schedule(message: types.Message, use_cases: UseCaseProvider) -> No
                 starts_at=datetime.now(),
                 ends_at=datetime.now() + timedelta(hours=2),
                 location="Тестовая локация",
-                description="Это тестовое событие для демонстрации"
+                description="Это тестовое событие для демонстрации",
             ),
         ]
         schedule_text = format_schedule(test_items)
@@ -122,7 +123,10 @@ async def cmd_rules(message: types.Message, use_cases: UseCaseProvider) -> None:
         await message.answer(rules_text, parse_mode="Markdown")
     except Exception as e:
         print(f"Error in /rules: {e}")
-        await message.answer("📋 *Правила хакатона:*\n\n1. Уважайте других участников\n2. Соблюдайте дедлайны\n3. Не используйте чужой код\n4. Веселитесь и учитесь!", parse_mode="Markdown")
+        await message.answer(
+            "📋 *Правила хакатона:*\n\n1. Уважайте других участников\n2. Соблюдайте дедлайны\n3. Не используйте чужой код\n4. Веселитесь и учитесь!",
+            parse_mode="Markdown",
+        )
 
 
 @user_router.message(Command("faq"))
@@ -134,7 +138,10 @@ async def cmd_faq(message: types.Message, use_cases: UseCaseProvider) -> None:
         await message.answer(faq_text, parse_mode="Markdown")
     except Exception as e:
         print(f"Error in /faq: {e}")
-        await message.answer("❓ *Часто задаваемые вопросы:*\n\n*1. Какой размер команды?*\nОт 2 до 5 человек.\n\n*2. Можно ли участвовать онлайн?*\nДа, есть онлайн-трек.\n\n*3. Где взять код хакатона?*\nУ организаторов или в группе.", parse_mode="Markdown")
+        await message.answer(
+            "❓ *Часто задаваемые вопросы:*\n\n*1. Какой размер команды?*\nОт 2 до 5 человек.\n\n*2. Можно ли участвовать онлайн?*\nДа, есть онлайн-трек.\n\n*3. Где взять код хакатона?*\nУ организаторов или в группе.",
+            parse_mode="Markdown",
+        )
 
 
 # ========== Уведомления ==========
