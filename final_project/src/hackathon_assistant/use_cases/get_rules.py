@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Optional
-from .ports import UserRepository, RulesRepository
+
 from .dto import RulesDTO
+from .ports import RulesRepository, UserRepository
 
 
 @dataclass
@@ -9,7 +9,7 @@ class GetRulesUseCase:
     user_repo: UserRepository
     rules_repo: RulesRepository
 
-    async def execute(self, telegram_id: int) -> Optional[RulesDTO]:
+    async def execute(self, telegram_id: int) -> RulesDTO | None:
         """Получить правила текущего хакатона userа
         На вход: telegram_id: ID пользователя в tg
         Возвращаем RulesDTO: Правила хакатона или None если не найдены

@@ -24,12 +24,6 @@ from ..use_cases.ports import (
 
 @dataclass(frozen=True)
 class RepositoryProvider:
-    """
-    Repository provider (infra wiring).
-
-    Wires SQLAlchemy adapters to use-cases ports.
-    """
-
     session: AsyncSession
 
     def user_repo(self) -> UserRepository:

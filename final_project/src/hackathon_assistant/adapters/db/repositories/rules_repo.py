@@ -1,18 +1,20 @@
 from __future__ import annotations
 
-from typing import Optional
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ....use_cases.ports import RulesRepository as RulesRepositoryProtocol
-from ..repositories_base import SQLAlchemyRepository
-from ..models import RulesORM
 from ....domain.models import Rules
+from ....use_cases.ports import RulesRepository
+from ..models import RulesORM
+from ..repositories_base import SQLAlchemyRepository
+from .mappers import to_dataclass
 
 
-class RulesRepo(SQLAlchemyRepository, RulesRepositoryProtocol):
+class RulesRepo(SQLAlchemyRepository, RulesRepository):
     def __init__(self, session: AsyncSession):
         super().__init__(session)
 
-    async def get_for_hackathon(self, hackathon_id: int) -> Optional[Rules]:
-        """Получить правила хакатона"""
-        raise NotImplementedError
+    async def get_for_hackathon(self, hackathon_id: int) -> Rules | None:
+        stmt = select(RulesORM).where(RulesORM.hackathon_id == hackathon_id)
+        orm_obj = (await self.session.execute(stmt)).scalars().first()
+        return None if orm_obj is None else to_dataclass(Rules, orm_obj.__dict__)
