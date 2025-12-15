@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import List
-from .ports import UserRepository, EventRepository
+
 from .dto import ScheduleItemDTO
+from .ports import EventRepository, UserRepository
 
 
 @dataclass
@@ -9,7 +9,7 @@ class GetScheduleUseCase:
     user_repo: UserRepository
     event_repo: EventRepository
 
-    async def execute(self, telegram_id: int) -> List[ScheduleItemDTO]:
+    async def execute(self, telegram_id: int) -> list[ScheduleItemDTO]:
         """Получить расписание текущего хакатона пользователя
         На вход: telegram_id: ID пользователя в tg
         Возвращаем List[ScheduleItemDTO]: список eventов, отсортированный по времени начала
@@ -27,5 +27,7 @@ class GetScheduleUseCase:
                 starts_at=e.starts_at,
                 ends_at=e.ends_at,
                 location=e.location,
-                description=e.description)
-            for e in events_sorted]
+                description=e.description,
+            )
+            for e in events_sorted
+        ]
