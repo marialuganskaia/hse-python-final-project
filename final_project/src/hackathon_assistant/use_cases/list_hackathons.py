@@ -20,3 +20,4 @@ class ListHackathonsUseCase:
         else:
             # Если понадобится получить все хакатоны, пока метода нет, на будущее
             return []
+
