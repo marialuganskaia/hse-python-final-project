@@ -41,3 +41,21 @@ class EventRepo(SQLAlchemyRepository, EventRepository):
         )
         items = (await self.session.execute(stmt)).scalars().all()
         return [to_dataclass(Event, o.__dict__) for o in items]
+
+    async def save_all(self, events: list[Event]) -> list[Event]:
+        saved_events = []
+        for event in events:
+            orm_obj = EventORM(
+                hackathon_id=event.hackathon_id,
+                title=event.title,
+                type=event.type,
+                starts_at=event.starts_at,
+                ends_at=event.ends_at,
+                location=event.location,
+                description=event.description,
+            )
+            self.session.add(orm_obj)
+            await self.session.flush()
+            saved_events.append(to_dataclass(Event, orm_obj.__dict__))
+        await self.session.commit()
+        return saved_events

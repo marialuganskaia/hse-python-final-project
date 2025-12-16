@@ -19,7 +19,7 @@ class StartUserUseCase:
             username: имя пользователя в tg
             first_name: имя в tg
             last_name: фамилия в tg
-        Возвращаем User: Сохраненный пользователь
+        Возвращаем User: сохраненный пользователь
         """
         user = await self.user_repo.get_by_telegram_id(telegram_id)
 

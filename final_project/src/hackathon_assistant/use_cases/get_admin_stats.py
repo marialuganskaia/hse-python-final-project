@@ -28,5 +28,5 @@ class GetAdminStatsUseCase:
             total_users=total_users,
             participants=participants,
             organizers=organizers,
-            subscribed_users=subscribed_users,
+            subscribed_users=subscribed_users
         )
