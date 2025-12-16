@@ -52,10 +52,6 @@ class GetHackathonInfoUseCase:
         Получить информацию о текущем хакатоне пользователя и статус подписки
         Возвращает: (информация о хакатоне, статус подписки)
         """
-<<<<<<< Updated upstream
-        # TODO: реализовать
-        pass
-=======
         user = await self.user_repo.get_by_telegram_id(telegram_id)
         if not user or not user.current_hackathon_id:
             return None, False
@@ -82,4 +78,3 @@ class GetHackathonInfoUseCase:
         )
         
         return hackathon_dto, is_subscribed
->>>>>>> Stashed changes

@@ -1,18 +1,7 @@
-<<<<<<< Updated upstream
 from aiogram import Router, types
-=======
-from datetime import datetime, timedelta
-
-from aiogram import Router, types, F
->>>>>>> Stashed changes
 from aiogram.filters import Command
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
-<<<<<<< Updated upstream
 from datetime import datetime, timedelta
-=======
-from hackathon_assistant.use_cases.dto import ScheduleItemDTO
-from aiogram.utils.keyboard import InlineKeyboardBuilder
->>>>>>> Stashed changes
 
 from .formatters import (
     format_welcome_message,
@@ -90,7 +79,6 @@ async def cmd_help(message: types.Message, use_cases: UseCaseProvider) -> None:
 async def cmd_hackathon(message: types.Message, use_cases: UseCaseProvider) -> None:
     """Информация о текущем хакатоне пользователя"""
     try:
-<<<<<<< Updated upstream
         hackathons = await use_cases.list_hackathons.execute(active_only=True)
         
         if not hackathons:
@@ -101,24 +89,6 @@ async def cmd_hackathon(message: types.Message, use_cases: UseCaseProvider) -> N
         is_subscribed = False
         
         hackathon_text = format_hackathon_info(first_hackathon, is_subscribed)
-=======
-        hackathon_dto, is_subscribed = await use_cases.get_hackathon_info.execute(
-            telegram_id=message.from_user.id
-        )
-        
-        if not hackathon_dto:
-            await message.answer(
-                "❌ *Хакатон не выбран*\n\n"
-                "Сначала присоединитесь к хакатону:\n"
-                "1. Используйте /select_hackathon чтобы увидеть доступные хакатоны\n"
-                "2. Затем /join <код> чтобы присоединиться\n\n"
-                "Код хакатона вам должны предоставить организаторы.",
-                parse_mode="Markdown"
-            )
-            return
-        
-        hackathon_text = format_hackathon_info(hackathon_dto, is_subscribed)
->>>>>>> Stashed changes
         await message.answer(hackathon_text, parse_mode="Markdown")
         
     except Exception as e:
@@ -298,7 +268,6 @@ async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider)
         
         code = parts[1].strip().upper()
         
-        # ВАЖНО: Исправляем имя use case согласно usecase_provider.py
         hackathon = await use_cases.select_hackathon_by_code.execute(
             telegram_id=message.from_user.id,
             hackathon_code=code

@@ -102,10 +102,10 @@ class SubscriptionRepository(Protocol):
         """Получить подписку пользователя на хакатон (/notify_on/off)"""
         ...
 
-    # async def subscribe(self, user_id: int, hackathon_id: int) -> ReminderSubscription:
-    #     """Создать/активировать подписку (/notify_on)."""
-    #     ...
-    #
+    async def subscribe(self, user_id: int, hackathon_id: int) -> ReminderSubscription:
+         """Создать/активировать подписку (/notify_on)."""
+         ...
+    
     # async def unsubscribe(self, user_id: int, hackathon_id: int) -> None:
     #     """Отключить подписку (/notify_off)"""
     #     ... вроде избыточно, но это не точно

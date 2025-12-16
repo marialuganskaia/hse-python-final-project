@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-<<<<<<< Updated upstream
 from ..use_cases.select_hackathon import SelectHackathonByCodeUseCase
 from ..use_cases.start_user import StartUserUseCase
 from ..use_cases.get_schedule import GetScheduleUseCase
@@ -12,25 +11,10 @@ from ..use_cases.get_rules import GetRulesUseCase
 from ..use_cases.get_faq import GetFAQUseCase
 from ..use_cases.notifications import SubscribeNotificationsUseCase, UnsubscribeNotificationsUseCase
 from ..use_cases.list_hackathons import ListHackathonsUseCase
-# TODO: добавить когда будут готовы:
-# from ..use_cases.get_hackathon_info import GetHackathonInfoUseCase
-# from ..use_cases.get_admin_stats import GetAdminStatsUseCase
-# from ..use_cases.send_broadcast import SendBroadcastUseCase
-# from ..use_cases.finish_hackathon import FinishHackathonUseCase
-=======
-from ..use_cases.finish_hackathon import FinishHackathonUseCase
-
 from ..use_cases.get_hackathon_info import GetHackathonInfoUseCase
 from ..use_cases.get_admin_stats import GetAdminStatsUseCase
-from ..use_cases.get_faq import GetFAQUseCase
-from ..use_cases.get_rules import GetRulesUseCase
-from ..use_cases.get_schedule import GetScheduleUseCase
-from ..use_cases.list_hackathons import ListHackathonsUseCase
-from ..use_cases.notifications import SubscribeNotificationsUseCase, UnsubscribeNotificationsUseCase
-from ..use_cases.select_hackathon import SelectHackathonByCodeUseCase
 from ..use_cases.send_broadcast import SendBroadcastUseCase
-from ..use_cases.start_user import StartUserUseCase
->>>>>>> Stashed changes
+from ..use_cases.finish_hackathon import FinishHackathonUseCase
 from .repositories import RepositoryProvider
 
 
