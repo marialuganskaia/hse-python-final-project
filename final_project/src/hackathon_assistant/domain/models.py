@@ -5,12 +5,14 @@ from enum import Enum
 
 class UserRole(str, Enum):
     """Роли пользователей"""
+
     PARTICIPANT = "participant"
     ORGANIZER = "organizer"
 
 
 class EventType(str, Enum):
     """Типы событий (предварительно)"""
+
     CHECKPOINT = "checkpoint"
     DEADLINE = "deadline"
     MEETUP = "meetup"
@@ -21,6 +23,7 @@ class EventType(str, Enum):
 @dataclass
 class User:
     """Участник или организатор хакатона"""
+
     telegram_id: int
     id: int | None = None
     username: str = ""
@@ -37,6 +40,7 @@ class User:
 @dataclass
 class Hackathon:
     """Хакатон"""
+
     code: str
     name: str
     end_at: datetime
@@ -49,6 +53,7 @@ class Hackathon:
 @dataclass
 class Event:
     """Событие в расписании хакатона"""
+
     hackathon_id: int  # Внешний ключ на Hackathon.id
     title: str
     ends_at: datetime
@@ -62,6 +67,7 @@ class Event:
 @dataclass
 class FAQItem:
     """Вопрос-ответ для хакатона"""
+
     hackathon_id: int  # Внешний ключ на Hackathon.id
     question: str
     answer: str
@@ -71,6 +77,7 @@ class FAQItem:
 @dataclass
 class Rules:
     """Правила и критерии оценки хакатона"""
+
     hackathon_id: int  # Внешний ключ на Hackathon.id
     content: str
     id: int | None = None
@@ -79,6 +86,7 @@ class Rules:
 @dataclass
 class ReminderSubscription:
     """Подписка на напоминания о событиях"""
+
     user_id: int  # Внешний ключ на User.id
     hackathon_id: int  # Внешний ключ на Hackathon.id
     id: int | None = None

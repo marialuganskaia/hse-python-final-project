@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import List
-from .ports import UserRepository, SubscriptionRepository
+
 from .dto import BroadcastTargetDTO
+from .ports import SubscriptionRepository, UserRepository
 
 
 @dataclass
@@ -9,7 +9,7 @@ class SendBroadcastUseCase:
     user_repo: UserRepository
     subscription_repo: SubscriptionRepository
 
-    async def execute(self, hackathon_id: int) -> List[BroadcastTargetDTO]:
+    async def execute(self, hackathon_id: int) -> list[BroadcastTargetDTO]:
         """Получить список пользователей для рассылки по хакатону"""
         subscriptions = await self.subscription_repo.get_by_hackathon(hackathon_id)
         active_subscriptions = [s for s in subscriptions if s.enabled]
@@ -23,4 +23,5 @@ class SendBroadcastUseCase:
                 first_name=user.first_name,
                 username=user.username,
             )
-            for user in subscribed_users]
+            for user in subscribed_users
+        ]

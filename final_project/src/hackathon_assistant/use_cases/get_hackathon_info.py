@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional, Tuple
-from .ports import UserRepository, HackathonRepository, SubscriptionRepository
+
 from .dto import HackathonDTO
+from .ports import HackathonRepository, SubscriptionRepository, UserRepository
+
 
 
 @dataclass
@@ -42,20 +43,16 @@ class GetHackathonInfoUseCase:
 @dataclass
 class GetHackathonInfoUseCase:
     """Use case для команды /hackathon"""
-    
+
     user_repo: UserRepository
     hackathon_repo: HackathonRepository
     subscription_repo: SubscriptionRepository
 
-    async def execute(self, telegram_id: int) -> Tuple[Optional[HackathonDTO], bool]:
+    async def execute(self, telegram_id: int) -> tuple[HackathonDTO | None, bool]:
         """
         Получить информацию о текущем хакатоне пользователя и статус подписки
         Возвращает: (информация о хакатоне, статус подписки)
         """
-<<<<<<< Updated upstream
-        # TODO: реализовать
-        pass
-=======
         user = await self.user_repo.get_by_telegram_id(telegram_id)
         if not user or not user.current_hackathon_id:
             return None, False
@@ -82,4 +79,4 @@ class GetHackathonInfoUseCase:
         )
         
         return hackathon_dto, is_subscribed
->>>>>>> Stashed changes
+
