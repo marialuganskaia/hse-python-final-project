@@ -227,7 +227,9 @@ def format_help_message(commands: List[dict]) -> str:
         commands = [
             {"command": "/start", "description": "Начало работы"},
             {"command": "/help", "description": "Помощь по командам"},
-            {"command": "/hackathon", "description": "Информация о хакатоне"},
+            {"command": "/select_hackathon", "description": "Показать доступные хакатоны"},
+            {"command": "/join <код>", "description": "Присоединиться к хакатону"},
+            {"command": "/hackathon", "description": "Информация о текущем хакатоне"},
             {"command": "/schedule", "description": "Расписание событий"},
             {"command": "/rules", "description": "Правила хакатона"},
             {"command": "/faq", "description": "Часто задаваемые вопросы"},
@@ -243,3 +245,24 @@ def format_help_message(commands: List[dict]) -> str:
     result += "\nДля использования просто введите команду или выберите из меню."
     
     return result
+
+
+def format_broadcast_preview(hackathon_name: str, user_count: int, message: str) -> str:
+    """
+    Форматирование предпросмотра рассылки
+
+    Args:
+        hackathon_name: название хакатона
+        user_count: количество получателей
+        message: текст сообщения для рассылки
+
+    Returns:
+        Отформатированный предпросмотр
+    """
+    preview = f"📨 *Предпросмотр рассылки:*\n\n"
+    preview += f"*Хакатон:* {hackathon_name}\n"
+    preview += f"*Получателей:* {user_count}\n\n"
+    preview += f"*Сообщение:*\n{message}\n\n"
+    preview += "Подтвердите отправку:"
+    
+    return preview
