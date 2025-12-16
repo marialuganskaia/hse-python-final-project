@@ -60,7 +60,7 @@ class UserRepo(SQLAlchemyRepository, UserRepository):
         await self.session.execute(stmt)
         await self.session.commit()
 
-    # --- методы для админки/будущего (можно оставить, но лучше реализовать)
+    # --- методы для админки
     async def count_all(self) -> int:
         stmt = select(func.count(UserORM.id))
         return int((await self.session.execute(stmt)).scalar_one())

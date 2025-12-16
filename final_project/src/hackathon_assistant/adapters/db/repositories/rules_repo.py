@@ -18,3 +18,13 @@ class RulesRepo(SQLAlchemyRepository, RulesRepository):
         stmt = select(RulesORM).where(RulesORM.hackathon_id == hackathon_id)
         orm_obj = (await self.session.execute(stmt)).scalars().first()
         return None if orm_obj is None else to_dataclass(Rules, orm_obj.__dict__)
+
+    async def save(self, rules: Rules) -> Rules:
+        orm_obj = RulesORM(
+            hackathon_id=rules.hackathon_id,
+            content=rules.content,
+        )
+        self.session.add(orm_obj)
+        await self.session.commit()
+        await self.session.refresh(orm_obj)
+        return to_dataclass(Rules, orm_obj.__dict__)

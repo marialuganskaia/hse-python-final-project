@@ -68,3 +68,27 @@ class BroadcastResultDTO:
     sent_successfully: int
     failed: int
     success_rate: float
+
+
+@dataclass
+class ReminderEventDTO:
+    """DTO для напоминания об ивенте"""
+
+    event_id: int
+    title: str
+    starts_at: datetime
+
+
+@dataclass
+class ReminderParticipantDTO:
+    """DTO для напоминания об ивенте конкретному челу"""
+
+    user_id: int
+    telegram_id: int
+
+
+@dataclass
+class ReminderPileDTO:
+    """DTO для напоминания об ивенте сразу пачке людей"""
+    event: ReminderEventDTO
+    participants: list[ReminderParticipantDTO]
