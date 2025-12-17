@@ -1,14 +1,21 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock
 
 import pytest
 
-from final_project.src.hackathon_assistant.domain.models import (
-    User, Hackathon, Event, FAQItem, Rules, ReminderSubscription,
-    UserRole, EventType
+from hackathon_assistant.domain.models import (
+    Event,
+    EventType,
+    FAQItem,
+    Hackathon,
+    ReminderSubscription,
+    Rules,
+    User,
+    UserRole,
 )
+
 
 @pytest.fixture
 def mock_user_repo():
@@ -77,7 +84,7 @@ def sample_organizer():
 @pytest.fixture
 def sample_hackathon():
     """Пример хакатона для тестов."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return Hackathon(
         id=1,
         code="HACK2024",
@@ -92,7 +99,7 @@ def sample_hackathon():
 @pytest.fixture
 def sample_event():
     """Пример события для тестов."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return Event(
         id=1,
         hackathon_id=1,

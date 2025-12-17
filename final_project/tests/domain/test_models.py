@@ -2,7 +2,8 @@ from dataclasses import is_dataclass
 from datetime import timedelta
 
 import pytest
-from src.hackathon_assistant.domain.models import (
+
+from hackathon_assistant.domain.models import (
     Event,
     EventType,
     FAQItem,

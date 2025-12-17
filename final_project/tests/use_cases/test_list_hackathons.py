@@ -1,6 +1,8 @@
+from dataclasses import replace
+
 import pytest
 
-from final_project.src.hackathon_assistant.use_cases.list_hackathons import ListHackathonsUseCase
+from hackathon_assistant.use_cases.list_hackathons import ListHackathonsUseCase
 
 
 class TestListHackathonsUseCase:
@@ -9,12 +11,12 @@ class TestListHackathonsUseCase:
     @pytest.mark.asyncio
     async def test_execute_active_only(self, mock_hackathon_repo, sample_hackathon):
         """Тест получения активных хакатонов."""
-        another_hackathon = sample_hackathon.copy()
+        another_hackathon = replace(sample_hackathon, id=2, code="HACK2023")
         another_hackathon.id = 2
         another_hackathon.code = "HACK2025"
         another_hackathon.is_active = True
 
-        inactive_hackathon = sample_hackathon.copy()
+        inactive_hackathon = replace(sample_hackathon, id=3, code="HACK2022", is_active=False)
         inactive_hackathon.id = 3
         inactive_hackathon.code = "INACTIVE"
         inactive_hackathon.is_active = False
