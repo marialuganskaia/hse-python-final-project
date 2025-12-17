@@ -73,10 +73,10 @@ class BroadcastResultDTO:
 class EventDTO:
     id: int
     title: str
-    description: str | None = None
     starts_at: datetime
     ends_at: datetime
     location: str | None = None
+    description: str | None = None
 
 @dataclass
 class ReminderEventDTO:
