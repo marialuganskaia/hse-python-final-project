@@ -5,20 +5,24 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from hackathon_assistant.infra.usecase_provider import UseCaseProvider
 
+from hackathon_assistant.domain.models import UserRole
+from hackathon_assistant.infra.settings import get_settings
+from hackathon_assistant.infra.usecase_provider import UseCaseProvider
+
 
 async def is_organizer(telegram_id: int, use_cases: UseCaseProvider) -> bool:
     """
     Проверяет, является ли пользователь организатором
-
-    TODO: Заменить на реальную проверку
     """
-    # ВРЕМЕННАЯ ЗАГЛУШКА для тестирования
-    # Разрешаем всем для тестирования UX
-    return True
+    settings = get_settings()
 
-    # Или проверка по конкретным ID:
-    # allowed_ids = [123456789]  # ваш Telegram ID
-    # return telegram_id in allowed_ids
+    # 1) Strict allow-list (if configured)
+    if settings.allowed_admin_ids:
+        return telegram_id in settings.allowed_admin_ids
+
+    # 2) Fallback: role-based from DB
+    user = await use_cases.start_user.user_repo.get_by_telegram_id(telegram_id)
+    return user is not None and user.role == UserRole.ORGANIZER
 
 
 async def get_current_hackathon_id(telegram_id: int, use_cases: UseCaseProvider) -> int | None:
