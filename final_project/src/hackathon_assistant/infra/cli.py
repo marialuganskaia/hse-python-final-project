@@ -133,7 +133,6 @@ class CLI:
                 faq_repo=repos.faq_repo(),
                 rules_repo=repos.rules_repo(),
             )
-
             result = await use_case.execute(config)
 
         print(f"Created hackathon id={result.id} code={result.code!r} name={result.name!r}")
