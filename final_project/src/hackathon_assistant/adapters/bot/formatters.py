@@ -267,3 +267,33 @@ def format_broadcast_preview(hackathon_name: str, user_count: int, message: str)
     preview += "Подтвердите отправку:"
     
     return preview
+
+def format_reminder_message(event, minutes_before: int) -> str:
+    """
+    Форматирование сообщения-напоминания
+    Шаблон: "через X минут событие ..."
+    """
+    from datetime import datetime
+    
+    if hasattr(event, 'starts_at'):
+        if isinstance(event.starts_at, datetime):
+            time_str = event.starts_at.strftime("%H:%M")
+        else:
+            time_str = str(event.starts_at)
+    else:
+        time_str = "не указано"
+    
+    message = (
+        f"🔔 *Напоминание*\n\n"
+        f"Через *{minutes_before} минут* начнется:\n"
+        f"📌 *{getattr(event, 'title', 'Событие')}*\n"
+        f"🕐 {time_str}"
+    )
+    if hasattr(event, 'location') and event.location:
+        message += f"\n📍 {event.location}"
+    
+    if hasattr(event, 'description') and event.description:
+        desc = event.description[:50] + "..." if len(event.description) > 50 else event.description
+        message += f"\n📝 {desc}"
+    
+    return message
