@@ -2,14 +2,16 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from final_project.src.hackathon_assistant.use_cases.notifications import SubscribeNotificationsUseCase
+from hackathon_assistant.use_cases.notifications import SubscribeNotificationsUseCase
 
 
 class TestSubscribeNotificationsUseCase:
     """Тесты для SubscribeNotificationsUseCase."""
 
     @pytest.mark.asyncio
-    async def test_execute_new_subscription(self, mock_user_repo, mock_subscription_repo, sample_user):
+    async def test_execute_new_subscription(
+        self, mock_user_repo, mock_subscription_repo, sample_user
+    ):
         """Тест создания новой подписки."""
         # Arrange
         mock_user_repo.get_by_telegram_id.return_value = sample_user
@@ -17,8 +19,7 @@ class TestSubscribeNotificationsUseCase:
         mock_subscription_repo.save = AsyncMock()
 
         use_case = SubscribeNotificationsUseCase(
-            user_repo=mock_user_repo,
-            subscription_repo=mock_subscription_repo
+            user_repo=mock_user_repo, subscription_repo=mock_subscription_repo
         )
         telegram_id = 123456789
 
@@ -26,19 +27,20 @@ class TestSubscribeNotificationsUseCase:
 
         mock_user_repo.get_by_telegram_id.assert_called_once_with(telegram_id)
         mock_subscription_repo.get_user_subscription.assert_called_once_with(
-            user_id=sample_user.id,
-            hackathon_id=sample_user.current_hackathon_id
+            user_id=sample_user.id, hackathon_id=sample_user.current_hackathon_id
         )
         mock_subscription_repo.save.assert_called_once()
-        saved_sub = mock_subscription_repo.save.call_args[0][0]
+        args, kwargs = mock_subscription_repo.save.call_args
+        saved_sub = args[0] if args else kwargs.get("subscription")
         assert saved_sub.user_id == sample_user.id
         assert saved_sub.hackathon_id == sample_user.current_hackathon_id
         assert saved_sub.enabled is True
         assert result is True
 
     @pytest.mark.asyncio
-    async def test_execute_existing_subscription_enable(self, mock_user_repo, mock_subscription_repo,
-                                                        sample_user, sample_subscription):
+    async def test_execute_existing_subscription_enable(
+        self, mock_user_repo, mock_subscription_repo, sample_user, sample_subscription
+    ):
         """Тест включения существующей подписки."""
         sample_subscription.enabled = False
         mock_user_repo.get_by_telegram_id.return_value = sample_user
@@ -46,8 +48,7 @@ class TestSubscribeNotificationsUseCase:
         mock_subscription_repo.save = AsyncMock()
 
         use_case = SubscribeNotificationsUseCase(
-            user_repo=mock_user_repo,
-            subscription_repo=mock_subscription_repo
+            user_repo=mock_user_repo, subscription_repo=mock_subscription_repo
         )
         telegram_id = 123456789
 
@@ -55,11 +56,11 @@ class TestSubscribeNotificationsUseCase:
 
         mock_user_repo.get_by_telegram_id.assert_called_once_with(telegram_id)
         mock_subscription_repo.get_user_subscription.assert_called_once_with(
-            user_id=sample_user.id,
-            hackathon_id=sample_user.current_hackathon_id
+            user_id=sample_user.id, hackathon_id=sample_user.current_hackathon_id
         )
         mock_subscription_repo.save.assert_called_once()
-        saved_sub = mock_subscription_repo.save.call_args[0][0]
+        args, kwargs = mock_subscription_repo.save.call_args
+        saved_sub = args[0] if args else kwargs.get("subscription")
         assert saved_sub.enabled is True
         assert result is True
 
@@ -69,8 +70,7 @@ class TestSubscribeNotificationsUseCase:
         mock_user_repo.get_by_telegram_id.return_value = None
 
         use_case = SubscribeNotificationsUseCase(
-            user_repo=mock_user_repo,
-            subscription_repo=mock_subscription_repo
+            user_repo=mock_user_repo, subscription_repo=mock_subscription_repo
         )
         telegram_id = 999999999
 
@@ -88,8 +88,7 @@ class TestSubscribeNotificationsUseCase:
         mock_user_repo.get_by_telegram_id.return_value = sample_user
 
         use_case = SubscribeNotificationsUseCase(
-            user_repo=mock_user_repo,
-            subscription_repo=mock_subscription_repo
+            user_repo=mock_user_repo, subscription_repo=mock_subscription_repo
         )
         telegram_id = 123456789
 

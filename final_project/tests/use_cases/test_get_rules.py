@@ -1,22 +1,21 @@
 import pytest
 
-from final_project.src.hackathon_assistant.use_cases.dto import RulesDTO
-from final_project.src.hackathon_assistant.use_cases.get_rules import GetRulesUseCase
+from hackathon_assistant.use_cases.dto import RulesDTO
+from hackathon_assistant.use_cases.get_rules import GetRulesUseCase
 
 
 class TestGetRulesUseCase:
     """Тесты для GetRulesUseCase."""
 
     @pytest.mark.asyncio
-    async def test_execute_with_rules(self, mock_user_repo, mock_rules_repo, sample_user, sample_rules):
+    async def test_execute_with_rules(
+        self, mock_user_repo, mock_rules_repo, sample_user, sample_rules
+    ):
         """Тест получения правил."""
         mock_user_repo.get_by_telegram_id.return_value = sample_user
         mock_rules_repo.get_for_hackathon.return_value = sample_rules
 
-        use_case = GetRulesUseCase(
-            user_repo=mock_user_repo,
-            rules_repo=mock_rules_repo
-        )
+        use_case = GetRulesUseCase(user_repo=mock_user_repo, rules_repo=mock_rules_repo)
         telegram_id = 123456789
 
         result = await use_case.execute(telegram_id)
@@ -31,10 +30,7 @@ class TestGetRulesUseCase:
         """Тест получения правил для несуществующего пользователя."""
         mock_user_repo.get_by_telegram_id.return_value = None
 
-        use_case = GetRulesUseCase(
-            user_repo=mock_user_repo,
-            rules_repo=mock_rules_repo
-        )
+        use_case = GetRulesUseCase(user_repo=mock_user_repo, rules_repo=mock_rules_repo)
         telegram_id = 999999999
 
         result = await use_case.execute(telegram_id)
@@ -49,10 +45,7 @@ class TestGetRulesUseCase:
         sample_user.current_hackathon_id = None
         mock_user_repo.get_by_telegram_id.return_value = sample_user
 
-        use_case = GetRulesUseCase(
-            user_repo=mock_user_repo,
-            rules_repo=mock_rules_repo
-        )
+        use_case = GetRulesUseCase(user_repo=mock_user_repo, rules_repo=mock_rules_repo)
         telegram_id = 123456789
 
         result = await use_case.execute(telegram_id)
@@ -67,10 +60,7 @@ class TestGetRulesUseCase:
         mock_user_repo.get_by_telegram_id.return_value = sample_user
         mock_rules_repo.get_for_hackathon.return_value = None
 
-        use_case = GetRulesUseCase(
-            user_repo=mock_user_repo,
-            rules_repo=mock_rules_repo
-        )
+        use_case = GetRulesUseCase(user_repo=mock_user_repo, rules_repo=mock_rules_repo)
         telegram_id = 123456789
 
         result = await use_case.execute(telegram_id)

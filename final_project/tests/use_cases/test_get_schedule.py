@@ -1,23 +1,23 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from final_project.src.hackathon_assistant.use_cases.get_schedule import GetScheduleUseCase
+from hackathon_assistant.domain.models import Event, EventType
+from hackathon_assistant.use_cases.get_schedule import GetScheduleUseCase
 
 
 class TestGetScheduleUseCase:
     """Тесты для GetScheduleUseCase."""
 
     @pytest.mark.asyncio
-    async def test_execute_with_events(self, mock_user_repo, mock_event_repo, sample_user, sample_event):
+    async def test_execute_with_events(
+        self, mock_user_repo, mock_event_repo, sample_user, sample_event
+    ):
         """Тест получения расписания с событиями."""
         mock_user_repo.get_by_telegram_id.return_value = sample_user
         mock_event_repo.get_by_hackathon.return_value = [sample_event]
 
-        use_case = GetScheduleUseCase(
-            user_repo=mock_user_repo,
-            event_repo=mock_event_repo
-        )
+        use_case = GetScheduleUseCase(user_repo=mock_user_repo, event_repo=mock_event_repo)
         telegram_id = 123456789
 
         result = await use_case.execute(telegram_id)
@@ -35,10 +35,7 @@ class TestGetScheduleUseCase:
         """Тест получения расписания для несуществующего пользователя."""
         mock_user_repo.get_by_telegram_id.return_value = None
 
-        use_case = GetScheduleUseCase(
-            user_repo=mock_user_repo,
-            event_repo=mock_event_repo
-        )
+        use_case = GetScheduleUseCase(user_repo=mock_user_repo, event_repo=mock_event_repo)
         telegram_id = 999999999
 
         result = await use_case.execute(telegram_id)
@@ -53,10 +50,7 @@ class TestGetScheduleUseCase:
         sample_user.current_hackathon_id = None
         mock_user_repo.get_by_telegram_id.return_value = sample_user
 
-        use_case = GetScheduleUseCase(
-            user_repo=mock_user_repo,
-            event_repo=mock_event_repo
-        )
+        use_case = GetScheduleUseCase(user_repo=mock_user_repo, event_repo=mock_event_repo)
         telegram_id = 123456789
 
         result = await use_case.execute(telegram_id)
@@ -68,28 +62,29 @@ class TestGetScheduleUseCase:
     @pytest.mark.asyncio
     async def test_execute_sorted_events(self, mock_user_repo, mock_event_repo, sample_user):
         """Тест сортировки событий по времени начала."""
-        now = datetime.now(timezone.utc)
-        event1 = sample_user.copy()
-        event1.id = 1
-        event1.starts_at = now + timedelta(hours=3)
-        event2 = sample_user.copy()
-        event2.id = 2
-        event2.starts_at = now + timedelta(hours=1)
-        event3 = sample_user.copy()
-        event3.id = 3
-        event3.starts_at = now + timedelta(hours=2)
-
         mock_user_repo.get_by_telegram_id.return_value = sample_user
-        mock_event_repo.get_by_hackathon.return_value = [event1, event2, event3]
 
-        use_case = GetScheduleUseCase(
-            user_repo=mock_user_repo,
-            event_repo=mock_event_repo
+        now = datetime.now(UTC)
+        e1 = Event(
+            id=1,
+            hackathon_id=sample_user.current_hackathon_id,
+            title="E1",
+            type=EventType.OTHER,
+            starts_at=now + timedelta(hours=2),
+            ends_at=now + timedelta(hours=3),
         )
+        e2 = Event(
+            id=2,
+            hackathon_id=sample_user.current_hackathon_id,
+            title="E2",
+            type=EventType.OTHER,
+            starts_at=now + timedelta(hours=1),
+            ends_at=now + timedelta(hours=2),
+        )
+        mock_event_repo.get_by_hackathon.return_value = [e1, e2]
 
+        use_case = GetScheduleUseCase(user_repo=mock_user_repo, event_repo=mock_event_repo)
         result = await use_case.execute(sample_user.telegram_id)
 
-        assert len(result) == 3
-        assert result[0].id == 2  # Самый ранний
-        assert result[1].id == 3  # Второй по времени
-        assert result[2].id == 1  # Самый поздний
+        assert len(result) == 2
+        assert result[0].starts_at <= result[1].starts_at
