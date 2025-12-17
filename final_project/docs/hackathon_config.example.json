@@ -1,0 +1,26 @@
+{
+  "hackathon": {
+    "code": "HACK2025",
+    "name": "Demo Hackathon",
+    "description": "Example config for CLI",
+    "start_at": "2025-12-20T10:00:00+00:00",
+    "end_at": "2025-12-22T18:00:00+00:00",
+    "is_active": true
+  },
+  "events": [
+    {
+      "title": "Checkpoint #1",
+      "type": "checkpoint",
+      "starts_at": "2025-12-20T14:00:00+00:00",
+      "ends_at": "2025-12-20T14:30:00+00:00",
+      "location": "Room A",
+      "description": "First checkpoint"
+    }
+  ],
+  "faq": [
+    { "question": "Where is the venue?", "answer": "Room A" }
+  ],
+  "rules": {
+    "content": "1) Be nice\n2) Ship something"
+  }
+}
