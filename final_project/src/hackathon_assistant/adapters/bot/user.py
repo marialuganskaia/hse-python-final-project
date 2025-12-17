@@ -23,7 +23,6 @@ from .formatters import (
 
 user_router = Router(name="user_router")
 
-
 async def require_hackathon_selected(message: types.Message, use_cases: UseCaseProvider) -> bool:
     """
     Проверяет, выбран ли у пользователя хакатон.
@@ -36,9 +35,14 @@ async def require_hackathon_selected(message: types.Message, use_cases: UseCaseP
         
         if not hackathon_dto:
             await message.answer(
-                "❌ *Сначала выберите хакатон!*\n\n"
-                "Используйте /select_hackathon чтобы увидеть доступные хакатоны,\n"
-                "а затем /join <код> чтобы присоединиться.",
+                "🎯 *Хакатон не выбран*\n\n"
+                "Чтобы использовать эту команду, сначала нужно присоединиться к хакатону:\n\n"
+                "1. Посмотрите доступные хакатоны:\n"
+                "   `/select_hackathon`\n\n"
+                "2. Присоединитесь по коду:\n"
+                "   `/join КОД_ХАКАТОНА`\n\n"
+                "*Пример:* `/join HACK2024`\n\n"
+                "Код хакатона можно получить у организаторов.",
                 parse_mode="Markdown"
             )
             return False
@@ -47,16 +51,17 @@ async def require_hackathon_selected(message: types.Message, use_cases: UseCaseP
     except Exception as e:
         print(f"Error checking hackathon: {e}")
         await message.answer(
-            "❌ Произошла ошибка при проверке хакатона.\n"
-            "Попробуйте позже или обратитесь к организаторам.",
+            "🤔 Не удалось проверить ваш хакатон.\n"
+            "Попробуйте:\n"
+            "1. Перезапустить бот: /start\n"
+            "2. Выбрать хакатон: /select_hackathon\n"
+            "3. Обратиться к организаторам",
             parse_mode="Markdown"
         )
         return False
-
+    
 
 # ========== Основные команды ==========
-
-
 @user_router.message(Command("start"))
 async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
     """Обработчик команды /start"""
@@ -73,7 +78,12 @@ async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
         
     except Exception as e:
         print(f"Error in /start: {e}")
-        await message.answer("Привет! Начинаем работу. Бот активирован.")
+        await message.answer(
+            "👋 Добро пожаловать!\n\n"
+            "Я бот для участников хакатона.\n"
+            "Используйте /help чтобы увидеть список команд."
+        )
+    
 
 
 @user_router.message(Command("help"))

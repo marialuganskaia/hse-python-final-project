@@ -1,26 +1,21 @@
-from hackathon_assistant.infra.usecase_provider import UseCaseProvider
-
+# helpers.py
 async def is_organizer(telegram_id: int, use_cases: UseCaseProvider) -> bool:
-    try:
-        user = await use_cases.get_user_by_telegram_id(telegram_id)
-        return user is not None and user.role == "organizer"
-    except Exception:
-        return False
-
+    """
+    Проверяет, является ли пользователь организатором
+    
+    TODO: Заменить на реальную проверку
+    """
+    # ВРЕМЕННАЯ ЗАГЛУШКА для тестирования
+    # Разрешаем всем для тестирования UX
+    return True
+    
+    # Или проверка по конкретным ID:
+    # allowed_ids = [123456789]  # ваш Telegram ID
+    # return telegram_id in allowed_ids
 
 async def get_current_hackathon_id(telegram_id: int, use_cases: UseCaseProvider) -> int | None:
     """
     Получает ID текущего хакатона пользователя
-
-    Args:
-        telegram_id: ID пользователя в Telegram
-        use_cases: провайдер use cases
-
-    Returns:
-        ID хакатона или None
     """
-    try:
-        user = await use_cases.get_user_by_telegram_id(telegram_id)
-        return user.current_hackathon_id if user else None
-    except Exception:
-        return None
+    # ВРЕМЕННАЯ ЗАГЛУШКА
+    return 1  # ID тестового хакатона
