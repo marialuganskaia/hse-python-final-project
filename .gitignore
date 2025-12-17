@@ -35,7 +35,4 @@ dev.db
 
 # env files
 final_project/.env
-final_project/.env.*
-
-# local docker env (secrets)
 final_project/.env.docker
