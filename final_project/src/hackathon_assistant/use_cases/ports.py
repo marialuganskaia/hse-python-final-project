@@ -74,6 +74,9 @@ class EventRepository(Protocol):
         """Получить предстоящие события (для напоминаний)"""
         ...
 
+    async def save_all(self, events: list[Event]) -> list[Event]:
+        ...
+
 
 class FAQRepository(Protocol):
     """Для сценариев: /faq"""
@@ -82,12 +85,18 @@ class FAQRepository(Protocol):
         """Получить все FAQ хакатона (/faq)"""
         ...
 
+    async def save_all(self, faq_items: list[FAQItem]) -> list[FAQItem]:
+        ...
+
 
 class RulesRepository(Protocol):
     """Для сценариев: /rules"""
 
     async def get_for_hackathon(self, hackathon_id: int) -> Rules | None:
         """Получить правила хакатона (/rules)"""
+        ...
+
+    async def save(self, rules: Rules) -> Rules:
         ...
 
 
@@ -122,6 +131,11 @@ class SubscriptionRepository(Protocol):
 
     async def get_by_hackathon(self, hackathon_id: int) -> list[ReminderSubscription]:
         """Получить все подписки по хакатону"""
+        ...
+
+
+class Notifier(Protocol):
+    async def send(self, telegram_id: int, text: str) -> None:
         ...
 
 

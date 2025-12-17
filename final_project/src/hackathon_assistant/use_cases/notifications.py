@@ -18,12 +18,15 @@ class SubscribeNotificationsUseCase:
         if user is None or user.current_hackathon_id is None:
             return False
 
-        sub = await self.subscription_repo.subscribe(
+        sub = await self.subscription_repo.get_user_subscription(
             user_id=user.id, hackathon_id=user.current_hackathon_id
         )
         if sub is None:
             sub = ReminderSubscription(
-                id=None, user_id=user.id, hackathon_id=user.current_hackathon_id, enabled=True
+                id=None,
+                user_id=user.id,
+                hackathon_id=user.current_hackathon_id,
+                enabled=True
             )
         else:
             sub.enabled = True

@@ -77,3 +77,26 @@ class EventDTO:
     starts_at: datetime
     ends_at: datetime
     location: str | None = None
+
+@dataclass
+class ReminderEventDTO:
+    """DTO для напоминания об ивенте"""
+
+    event_id: int
+    title: str
+    starts_at: datetime
+
+
+@dataclass
+class ReminderParticipantDTO:
+    """DTO для напоминания об ивенте конкретному челу"""
+
+    user_id: int
+    telegram_id: int
+
+
+@dataclass
+class ReminderPileDTO:
+    """DTO для напоминания об ивенте сразу пачке людей"""
+    event: ReminderEventDTO
+    participants: list[ReminderParticipantDTO]
