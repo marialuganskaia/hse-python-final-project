@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,7 +9,7 @@ from ....domain.models import Event
 from ....use_cases.ports import EventRepository
 from ..models import EventORM
 from ..repositories_base import SQLAlchemyRepository
-from .mappers import to_dataclass
+from .mappers import to_dataclass, to_utc_naive
 
 
 class EventRepo(SQLAlchemyRepository, EventRepository):
@@ -26,7 +26,7 @@ class EventRepo(SQLAlchemyRepository, EventRepository):
         return [to_dataclass(Event, o.__dict__) for o in items]
 
     async def get_upcoming_events(self, hackathon_id: int, hours_ahead: int) -> list[Event]:
-        now = datetime.now()
+        now = datetime.now(UTC).replace(tzinfo=None)
         upper = now + timedelta(hours=hours_ahead)
         stmt = (
             select(EventORM)
@@ -49,8 +49,8 @@ class EventRepo(SQLAlchemyRepository, EventRepository):
                 hackathon_id=event.hackathon_id,
                 title=event.title,
                 type=event.type,
-                starts_at=event.starts_at,
-                ends_at=event.ends_at,
+                starts_at=to_utc_naive(event.starts_at),
+                ends_at=to_utc_naive(event.ends_at),
                 location=event.location,
                 description=event.description,
             )
