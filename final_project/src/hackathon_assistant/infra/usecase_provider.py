@@ -37,6 +37,9 @@ class UseCaseProvider:
     get_admin_stats: GetAdminStatsUseCase
     send_broadcast: SendBroadcastUseCase
     finish_hackathon: FinishHackathonUseCase
+    async def get_user_by_telegram_id(self, telegram_id: int):
+        """Получить пользователя по Telegram ID"""
+        return await self.start_user.user_repo.get_by_telegram_id(telegram_id)
 
 
 def build_use_case_provider(session: AsyncSession) -> UseCaseProvider:
