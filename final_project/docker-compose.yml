@@ -4,10 +4,37 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: hackathon_db
+      POSTGRES_USER: postgres
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hackathon_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  bot:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # внутри docker НЕЛЬЗЯ localhost, должен быть host=db
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/hackathon_db
+      BOT_TOKEN: ${BOT_TOKEN:?set BOT_TOKEN in .env.docker}
+    command: ["python", "-m", "hackathon_assistant.infra.main"]
+
+  migrate:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/hackathon_db
+      BOT_TOKEN: dummy
+    command: ["alembic", "upgrade", "head"]
 
 volumes:
   pgdata:
