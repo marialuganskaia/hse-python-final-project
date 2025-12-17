@@ -23,7 +23,7 @@ services:
     environment:
       # внутри docker НЕЛЬЗЯ localhost, должен быть host=db
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/hackathon_db
-      BOT_TOKEN: ${BOT_TOKEN:?set BOT_TOKEN in .env.docker}
+      BOT_TOKEN: ${BOT_TOKEN}
     command: ["python", "-m", "hackathon_assistant.infra.main"]
 
   migrate:
@@ -33,7 +33,7 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/hackathon_db
-      BOT_TOKEN: dummy
+      BOT_TOKEN: ${BOT_TOKEN}
     command: ["alembic", "upgrade", "head"]
 
 volumes:
