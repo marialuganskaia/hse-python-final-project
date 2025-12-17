@@ -1,5 +1,4 @@
-import pytest
-from src.hackathon_assistant.domain.models import UserRole, EventType
+from src.hackathon_assistant.domain.models import EventType, UserRole
 
 
 class TestUserRole:
@@ -17,9 +16,7 @@ class TestUserRole:
 class TestEventType:
     def test_event_type_values(self):
         """Проверка всех возможных типов событий."""
-        expected = [
-            "checkpoint", "deadline", "meetup", "lecture", "other"
-        ]
+        expected = ["checkpoint", "deadline", "meetup", "lecture", "other"]
         assert list(EventType) == expected
 
     def test_event_type_enum(self):

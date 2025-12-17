@@ -30,6 +30,5 @@ build/
 hackathon_bot.db
 
 # local artifacts
-.coverage
 *.db
 dev.db
