@@ -117,6 +117,16 @@ class CLI:
 
         async with get_session() as session:
             repos = RepositoryProvider(session=session)
+
+            existing = await repos.hackathon_repo().get_by_code(config["code"])
+            if existing is not None:
+                print(
+                    f"Hackathon already exists: id={existing.id} code={existing.code!r} "
+                    f"name={existing.name!r}"
+                )
+                print("If you want to create a new one, change `code` in the config JSON.")
+                return 0
+
             use_case = CreateHackathonFromConfigUseCase(
                 hackathon_repo=repos.hackathon_repo(),
                 event_repo=repos.event_repo(),
