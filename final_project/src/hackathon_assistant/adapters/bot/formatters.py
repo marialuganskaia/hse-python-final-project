@@ -203,7 +203,10 @@ def format_help_message(commands: list[dict]) -> str:
         {"command": "/start", "description": "Начать работу с ботом"},
         {"command": "/help", "description": "Показать это сообщение"},
         {"command": "/select_hackathon", "description": "Посмотреть доступные хакатоны"},
-        {"command": "/join КОД", "description": "Присоединиться к хакатону (например: /join HACK2024)"},
+        {
+            "command": "/join КОД",
+            "description": "Присоединиться к хакатону (например: /join HACK2024)",
+        },
         {"command": "/hackathon", "description": "Информация о текущем хакатоне"},
         {"command": "/schedule", "description": "Расписание событий"},
         {"command": "/rules", "description": "Правила хакатона"},
@@ -242,13 +245,14 @@ def format_broadcast_preview(hackathon_name: str, user_count: int, message: str)
     Returns:
         Отформатированный предпросмотр
     """
-    preview = f"📨 *Предпросмотр рассылки:*\n\n"
+    preview = "📨 *Предпросмотр рассылки:*\n\n"
     preview += f"*Хакатон:* {hackathon_name}\n"
     preview += f"*Получателей:* {user_count}\n\n"
     preview += f"*Сообщение:*\n{message}\n\n"
     preview += "Подтвердите отправку:"
-    
+
     return preview
+
 
 def format_reminder_message(event, minutes_before: int) -> str:
     """
@@ -256,26 +260,26 @@ def format_reminder_message(event, minutes_before: int) -> str:
     Шаблон: "через X минут событие ..."
     """
     from datetime import datetime
-    
-    if hasattr(event, 'starts_at'):
+
+    if hasattr(event, "starts_at"):
         if isinstance(event.starts_at, datetime):
             time_str = event.starts_at.strftime("%H:%M")
         else:
             time_str = str(event.starts_at)
     else:
         time_str = "не указано"
-    
+
     message = (
         f"🔔 *Напоминание*\n\n"
         f"Через *{minutes_before} минут* начнется:\n"
         f"📌 *{getattr(event, 'title', 'Событие')}*\n"
         f"🕐 {time_str}"
     )
-    if hasattr(event, 'location') and event.location:
+    if hasattr(event, "location") and event.location:
         message += f"\n📍 {event.location}"
-    
-    if hasattr(event, 'description') and event.description:
+
+    if hasattr(event, "description") and event.description:
         desc = event.description[:50] + "..." if len(event.description) > 50 else event.description
         message += f"\n📝 {desc}"
-    
+
     return message

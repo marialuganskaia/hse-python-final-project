@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Any
 
-from ..domain.models import Hackathon, Event, FAQItem, Rules
-from .ports import HackathonRepository, EventRepository, FAQRepository, RulesRepository
+from ..domain.models import Event, FAQItem, Hackathon, Rules
+from .ports import EventRepository, FAQRepository, HackathonRepository, RulesRepository
 
 
 @dataclass

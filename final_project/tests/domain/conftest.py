@@ -1,8 +1,7 @@
 import pytest
 from datetime import datetime, timedelta, timezone
 
-from src.hackathon_assistant.domain.models import (
-    User, Hackathon, Event, FAQItem, Rules, ReminderSubscription,
+from final_project.src.hackathon_assistant.domain.models import (
     UserRole, EventType
 )
 

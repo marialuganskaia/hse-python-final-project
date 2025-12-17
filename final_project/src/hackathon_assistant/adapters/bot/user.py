@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-from aiogram import Router, types, F
+
+from aiogram import Router, types
 from aiogram.filters import Command
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
 from hackathon_assistant.use_cases.dto import ScheduleItemDTO
@@ -13,10 +13,10 @@ from .formatters import (
     format_notification_status,
     format_rules,
     format_schedule,
-    format_welcome_message,
 )
 
 user_router = Router(name="user_router")
+
 
 async def require_hackathon_selected(message: types.Message, use_cases: UseCaseProvider) -> bool:
     """
@@ -27,7 +27,7 @@ async def require_hackathon_selected(message: types.Message, use_cases: UseCaseP
         hackathon_dto, _ = await use_cases.get_hackathon_info.execute(
             telegram_id=message.from_user.id
         )
-        
+
         if not hackathon_dto:
             await message.answer(
                 "🎯 *Хакатон не выбран*\n\n"
@@ -38,11 +38,11 @@ async def require_hackathon_selected(message: types.Message, use_cases: UseCaseP
                 "   `/join КОД_ХАКАТОНА`\n\n"
                 "*Пример:* `/join HACK2024`\n\n"
                 "Код хакатона можно получить у организаторов.",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
             return False
         return True
-        
+
     except Exception as e:
         print(f"Error checking hackathon: {e}")
         await message.answer(
@@ -51,10 +51,10 @@ async def require_hackathon_selected(message: types.Message, use_cases: UseCaseP
             "1. Перезапустить бот: /start\n"
             "2. Выбрать хакатон: /select_hackathon\n"
             "3. Обратиться к организаторам",
-            parse_mode="Markdown"
+            parse_mode="Markdown",
         )
         return False
-    
+
 
 # ========== Основные команды ==========
 @user_router.message(Command("start"))
@@ -67,10 +67,10 @@ async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
             first_name=message.from_user.first_name,
             last_name=message.from_user.last_name,
         )
-    
+
         welcome_text = f"👋 Привет, {message.from_user.first_name or 'друг'}!\n\nДобро пожаловать в бот хакатона. Используйте /help для списка команд."
         await message.answer(welcome_text, parse_mode="Markdown")
-        
+
     except Exception as e:
         print(f"Error in /start: {e}")
         await message.answer(
@@ -78,7 +78,6 @@ async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
             "Я бот для участников хакатона.\n"
             "Используйте /help чтобы увидеть список команд."
         )
-    
 
 
 @user_router.message(Command("help"))
@@ -101,9 +100,8 @@ async def cmd_help(message: types.Message, use_cases: UseCaseProvider) -> None:
             "/faq - Частые вопросы\n"
             "/notify_on - Включить уведомления\n"
             "/notify_off - Выключить уведомления",
-            parse_mode="Markdown"
+            parse_mode="Markdown",
         )
-        
 
 
 @user_router.message(Command("hackathon"))
@@ -113,7 +111,7 @@ async def cmd_hackathon(message: types.Message, use_cases: UseCaseProvider) -> N
         hackathon_dto, is_subscribed = await use_cases.get_hackathon_info.execute(
             telegram_id=message.from_user.id
         )
-        
+
         if not hackathon_dto:
             await message.answer(
                 "❌ *Хакатон не выбран*\n\n"
@@ -121,13 +119,13 @@ async def cmd_hackathon(message: types.Message, use_cases: UseCaseProvider) -> N
                 "1. Используйте /select_hackathon чтобы увидеть доступные хакатоны\n"
                 "2. Затем /join <код> чтобы присоединиться\n\n"
                 "Код хакатона вам должны предоставить организаторы.",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
             return
-        
+
         hackathon_text = format_hackathon_info(hackathon_dto, is_subscribed)
         await message.answer(hackathon_text, parse_mode="Markdown")
-        
+
     except Exception as e:
         print(f"Error in /hackathon: {e}")
         await message.answer("Информация о хакатоне временно недоступна.")
@@ -142,7 +140,7 @@ async def cmd_schedule(message: types.Message, use_cases: UseCaseProvider) -> No
     # Проверка выбранного хакатона
     if not await require_hackathon_selected(message, use_cases):
         return
-    
+
     try:
         schedule_items = await use_cases.get_schedule.execute(message.from_user.id)
 
@@ -191,7 +189,7 @@ async def cmd_rules(message: types.Message, use_cases: UseCaseProvider) -> None:
     # Проверка выбранного хакатона
     if not await require_hackathon_selected(message, use_cases):
         return
-    
+
     try:
         rules_dto = await use_cases.get_rules.execute(message.from_user.id)
         rules_text = format_rules(rules_dto)
@@ -210,7 +208,7 @@ async def cmd_faq(message: types.Message, use_cases: UseCaseProvider) -> None:
     # Проверка выбранного хакатона
     if not await require_hackathon_selected(message, use_cases):
         return
-    
+
     try:
         faq_items = await use_cases.get_faq.execute(message.from_user.id)
         faq_text = format_faq(faq_items)
@@ -232,7 +230,7 @@ async def cmd_notify_on(message: types.Message, use_cases: UseCaseProvider) -> N
     # Проверка выбранного хакатона
     if not await require_hackathon_selected(message, use_cases):
         return
-    
+
     try:
         success = await use_cases.subscribe_notifications.execute(message.from_user.id)
         status_text = format_notification_status(success)
@@ -248,7 +246,7 @@ async def cmd_notify_off(message: types.Message, use_cases: UseCaseProvider) -> 
     # Проверка выбранного хакатона
     if not await require_hackathon_selected(message, use_cases):
         return
-    
+
     try:
         success = await use_cases.unsubscribe_notifications.execute(message.from_user.id)
         status_text = format_notification_status(not success)
@@ -263,16 +261,16 @@ async def cmd_select_hackathon(message: types.Message, use_cases: UseCaseProvide
     """Показать доступные хакатоны"""
     try:
         hackathons = await use_cases.list_hackathons.execute(active_only=True)
-        
+
         if not hackathons:
             await message.answer(
                 "📭 *Сейчас нет активных хакатонов*\n\n"
                 "Все хакатоны либо завершены, либо еще не начались.\n"
                 "Обратитесь к организаторам за информацией.",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
             return
-        
+
         hackathon_list = []
         for i, hackathon in enumerate(hackathons, 1):
             item = f"{i}. *{hackathon.name}*"
@@ -281,14 +279,14 @@ async def cmd_select_hackathon(message: types.Message, use_cases: UseCaseProvide
             if hackathon.start_at:
                 item += f" - {hackathon.start_at.strftime('%d.%m.%Y')}"
             hackathon_list.append(item)
-        
+
         message_text = "🎯 *Доступные хакатоны:*\n\n" + "\n".join(hackathon_list)
         message_text += "\n\n*Чтобы присоединиться, используйте:*\n"
         message_text += "`/join <код_хакатона>`\n\n"
         message_text += f"*Пример:* `/join {hackathons[0].code if hackathons[0].code else 'КОД'}`"
-        
+
         await message.answer(message_text, parse_mode="Markdown")
-        
+
     except Exception as e:
         print(f"Error in /select_hackathon: {e}")
         await message.answer(
@@ -307,18 +305,17 @@ async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider)
                 "❌ *Использование:* `/join <код_хакатона>`\n\n"
                 "*Пример:* `/join HACK2024`\n"
                 "Используйте /select_hackathon чтобы увидеть список доступных хакатонов.",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
             return
-        
+
         code = parts[1].strip().upper()
-        
+
         # ВАЖНО: Исправляем имя use case согласно usecase_provider.py
         hackathon = await use_cases.select_hackathon_by_code.execute(
-            telegram_id=message.from_user.id,
-            hackathon_code=code
+            telegram_id=message.from_user.id, hackathon_code=code
         )
-        
+
         if hackathon:
             await message.answer(
                 f"✅ *Успешно!*\n\n"
@@ -330,16 +327,16 @@ async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider)
                 f"• Смотреть FAQ (/faq)\n"
                 f"• Включить уведомления (/notify_on)\n"
                 f"• Посмотреть информацию (/hackathon)",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
         else:
             await message.answer(
                 f"❌ *Хакатон не найден*\n\n"
                 f"Код `{code}` не соответствует ни одному активному хакатону.\n"
                 f"Проверьте правильность кода или используйте /select_hackathon для списка.",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
-            
+
     except Exception as e:
         print(f"Error in /join: {e}")
         await message.answer(

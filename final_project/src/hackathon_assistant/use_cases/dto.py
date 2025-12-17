@@ -69,6 +69,7 @@ class BroadcastResultDTO:
     failed: int
     success_rate: float
 
+
 @dataclass
 class EventDTO:
     id: int
@@ -77,6 +78,7 @@ class EventDTO:
     ends_at: datetime
     location: str | None = None
     description: str | None = None
+
 
 @dataclass
 class ReminderEventDTO:
@@ -98,5 +100,6 @@ class ReminderParticipantDTO:
 @dataclass
 class ReminderPileDTO:
     """DTO для напоминания об ивенте сразу пачке людей"""
+
     event: ReminderEventDTO
     participants: list[ReminderParticipantDTO]

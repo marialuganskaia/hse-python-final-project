@@ -1,10 +1,16 @@
-import pytest
-from datetime import datetime, timedelta
 from dataclasses import is_dataclass
+from datetime import timedelta
 
+import pytest
 from src.hackathon_assistant.domain.models import (
-    User, Hackathon, Event, FAQItem, Rules, ReminderSubscription,
-    UserRole, EventType
+    Event,
+    EventType,
+    FAQItem,
+    Hackathon,
+    ReminderSubscription,
+    Rules,
+    User,
+    UserRole,
 )
 
 

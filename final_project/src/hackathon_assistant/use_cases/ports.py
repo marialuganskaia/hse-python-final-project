@@ -74,8 +74,7 @@ class EventRepository(Protocol):
         """Получить предстоящие события (для напоминаний)"""
         ...
 
-    async def save_all(self, events: list[Event]) -> list[Event]:
-        ...
+    async def save_all(self, events: list[Event]) -> list[Event]: ...
 
 
 class FAQRepository(Protocol):
@@ -85,8 +84,7 @@ class FAQRepository(Protocol):
         """Получить все FAQ хакатона (/faq)"""
         ...
 
-    async def save_all(self, faq_items: list[FAQItem]) -> list[FAQItem]:
-        ...
+    async def save_all(self, faq_items: list[FAQItem]) -> list[FAQItem]: ...
 
 
 class RulesRepository(Protocol):
@@ -96,8 +94,7 @@ class RulesRepository(Protocol):
         """Получить правила хакатона (/rules)"""
         ...
 
-    async def save(self, rules: Rules) -> Rules:
-        ...
+    async def save(self, rules: Rules) -> Rules: ...
 
 
 class SubscriptionRepository(Protocol):
@@ -135,8 +132,7 @@ class SubscriptionRepository(Protocol):
 
 
 class Notifier(Protocol):
-    async def send(self, telegram_id: int, text: str) -> None:
-        ...
+    async def send(self, telegram_id: int, text: str) -> None: ...
 
 
 # ========== Request/Response модели для use cases ==========
