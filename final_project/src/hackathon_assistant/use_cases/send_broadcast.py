@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from .dto import BroadcastTargetDTO
+from .dto import BroadcastResultDTO, BroadcastTargetDTO
 from .ports import SubscriptionRepository, UserRepository
 
 
@@ -8,7 +8,6 @@ from .ports import SubscriptionRepository, UserRepository
 class SendBroadcastUseCase:
     user_repo: UserRepository
     subscription_repo: SubscriptionRepository
-    
 
     async def execute(self, hackathon_id: int, message: str) -> BroadcastResultDTO:
         """Получить список пользователей для рассылки по хакатону"""
@@ -23,7 +22,6 @@ class SendBroadcastUseCase:
                 user_id=user.id,
                 first_name=user.first_name,
                 username=user.username,
-            
             )
             for user in subscribed_users
         ]

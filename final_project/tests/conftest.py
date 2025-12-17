@@ -1,15 +1,17 @@
-import pytest
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
+import pytest
 from src.hackathon_assistant.domain.models import (
-    User, Hackathon, Event, FAQItem, Rules, ReminderSubscription,
-    UserRole, EventType
+    EventType,
+    UserRole,
 )
+
 
 @pytest.fixture
 def sample_datetime():
     """Фикстура с тестовым datetime."""
-    return datetime(2025, 12, 4, 10, 0, 0, tzinfo=timezone.utc)
+    return datetime(2025, 12, 4, 10, 0, 0, tzinfo=UTC)
+
 
 @pytest.fixture
 def sample_user_data():
@@ -23,6 +25,7 @@ def sample_user_data():
         "current_hackathon_id": 1,
     }
 
+
 @pytest.fixture
 def sample_hackathon_data(sample_datetime):
     """Тестовые данные для хакатона."""
@@ -34,6 +37,7 @@ def sample_hackathon_data(sample_datetime):
         "end_at": sample_datetime + timedelta(days=3),
         "is_active": True,
     }
+
 
 @pytest.fixture
 def sample_event_data(sample_datetime):
@@ -48,31 +52,20 @@ def sample_event_data(sample_datetime):
         "description": "Промежуточная сдача прототипа",
     }
 
+
 @pytest.fixture
 def sample_faq_data():
     """Тестовые данные для FAQ."""
-    return {
-        "hackathon_id": 1,
-        "question": "Question?",
-        "answer": "Answer.",
-        "id": 123
-    }
+    return {"hackathon_id": 1, "question": "Question?", "answer": "Answer.", "id": 123}
+
 
 @pytest.fixture
 def sample_rules_data():
     """Тестовые данные для правил."""
-    return {
-        "hackathon_id": 1,
-        "content": "1. Правило\n2. Еще правило",
-        "id": 123
-    }
+    return {"hackathon_id": 1, "content": "1. Правило\n2. Еще правило", "id": 123}
+
 
 @pytest.fixture
 def sample_reminder_subscription_data():
     """Тестовые данные для правил."""
-    return {
-        "user_id": 123456789,
-        "hackathon_id": 1,
-        "id": 123,
-        "enabled": True
-    }
+    return {"user_id": 123456789, "hackathon_id": 1, "id": 123, "enabled": True}
