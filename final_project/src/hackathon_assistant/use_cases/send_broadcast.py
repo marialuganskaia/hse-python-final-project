@@ -8,8 +8,9 @@ from .ports import SubscriptionRepository, UserRepository
 class SendBroadcastUseCase:
     user_repo: UserRepository
     subscription_repo: SubscriptionRepository
+    
 
-    async def execute(self, hackathon_id: int) -> list[BroadcastTargetDTO]:
+    async def execute(self, hackathon_id: int, message: str) -> BroadcastResultDTO:
         """Получить список пользователей для рассылки по хакатону"""
         subscriptions = await self.subscription_repo.get_by_hackathon(hackathon_id)
         active_subscriptions = [s for s in subscriptions if s.enabled]
@@ -22,6 +23,7 @@ class SendBroadcastUseCase:
                 user_id=user.id,
                 first_name=user.first_name,
                 username=user.username,
+            
             )
             for user in subscribed_users
         ]
