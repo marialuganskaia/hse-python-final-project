@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from aiogram import Router, types
-=======
 from datetime import datetime, timedelta
 
 from aiogram import Router, types, F
@@ -10,7 +9,6 @@ from aiogram.filters import Command
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
 from hackathon_assistant.use_cases.dto import ScheduleItemDTO
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-=======
 from hackathon_assistant.use_cases.dto import ScheduleItemDTO
 
 from .formatters import (
