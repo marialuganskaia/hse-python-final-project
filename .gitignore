@@ -8,6 +8,7 @@ __pycache__/
 venv/
 
 # pytest
+.coverage
 .pytest_cache/
 
 # env
