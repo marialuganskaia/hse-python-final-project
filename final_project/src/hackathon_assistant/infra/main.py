@@ -51,7 +51,10 @@ async def main() -> None:
 
             reminder_service = ReminderService(bot, build_use_case_provider)
 
-            await reminder_service.start_periodic_reminders(interval_minutes=5)
+            if settings.reminders_enabled:
+                await reminder_service.start_periodic_reminders(
+                    interval_minutes=settings.reminder_interval_minutes
+                )
             logger.info("Reminder service started")
 
         except Exception as e:

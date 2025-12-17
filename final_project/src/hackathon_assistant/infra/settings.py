@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     database_url: str
     allowed_admin_ids: str | None = None
 
+    reminders_enabled: bool = True
+    reminder_interval_minutes: int = 5
+
     model_config = SettingsConfigDict(
         env_file=_PROJECT_ROOT / ".env",
         env_file_encoding="utf-8",
