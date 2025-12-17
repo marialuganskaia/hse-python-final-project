@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
+from typing import Any
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -10,7 +13,25 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 class Settings(BaseSettings):
     bot_token: str
     database_url: str
-    allowed_admin_ids: str | None = None
+
+    allowed_admin_ids: list[int] = []
+
+    @field_validator("allowed_admin_ids", mode="before")
+    @classmethod
+    def _parse_allowed_admin_ids(cls, v: Any) -> list[int]:
+        if v is None or v == "":
+            return []
+        if isinstance(v, list):
+            return [int(x) for x in v]
+        if isinstance(v, str):
+            s = v.strip()
+            # JSON
+            if s.startswith("[") and s.endswith("]"):
+                data = json.loads(s)
+                return [int(x) for x in data]
+            # CSV
+            return [int(x.strip()) for x in s.split(",") if x.strip()]
+        return [int(v)]
 
     reminders_enabled: bool = True
     reminder_interval_minutes: int = 5
