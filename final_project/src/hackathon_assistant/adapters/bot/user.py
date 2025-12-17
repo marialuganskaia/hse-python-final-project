@@ -1,14 +1,9 @@
 from datetime import datetime, timedelta
-
-from aiogram import Router, types
-from datetime import datetime, timedelta
-
 from aiogram import Router, types, F
 from aiogram.filters import Command
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
-from hackathon_assistant.use_cases.dto import ScheduleItemDTO
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 from hackathon_assistant.use_cases.dto import ScheduleItemDTO
 
 from .formatters import (
@@ -89,8 +84,26 @@ async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
 @user_router.message(Command("help"))
 async def cmd_help(message: types.Message, use_cases: UseCaseProvider) -> None:
     """Обработчик команды /help"""
-    help_text = format_help_message([])
-    await message.answer(help_text, parse_mode="Markdown")
+    try:
+        help_text = format_help_message([])
+        await message.answer(help_text, parse_mode="Markdown")
+    except Exception as e:
+        print(f"Error in /help: {e}")
+        await message.answer(
+            "ℹ️ *Доступные команды:*\n\n"
+            "/start - Начало работы\n"
+            "/help - Помощь\n"
+            "/select_hackathon - Выбрать хакатон\n"
+            "/join КОД - Присоединиться\n"
+            "/hackathon - Информация о хакатоне\n"
+            "/schedule - Расписание\n"
+            "/rules - Правила\n"
+            "/faq - Частые вопросы\n"
+            "/notify_on - Включить уведомления\n"
+            "/notify_off - Выключить уведомления",
+            parse_mode="Markdown"
+        )
+        
 
 
 @user_router.message(Command("hackathon"))
