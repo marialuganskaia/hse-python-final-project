@@ -5,8 +5,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
+from hackathon_assistant.use_cases.dto import BroadcastResultDTO
 
-from ..use_cases.dto import BroadcastResultDTO
 from .formatters import (
     format_admin_stats,
     format_broadcast_preview,
