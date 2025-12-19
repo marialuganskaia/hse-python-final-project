@@ -51,14 +51,14 @@ class BroadcastTargetDTO:
 @dataclass
 class HackathonDTO:
     """DTO для информации о хакатоне"""
-
+    id: int
     name: str
-    start_date: datetime
-    end_date: datetime
-    description: str | None = None
+    code: str
+    description: str
+    start_at: datetime
+    end_at: datetime
+    is_active: bool
     location: str | None = None
-    code: str | None = None
-
 
 @dataclass
 class BroadcastResultDTO:
@@ -69,14 +69,16 @@ class BroadcastResultDTO:
     failed: int
     success_rate: float
 
+
 @dataclass
 class EventDTO:
     id: int
     title: str
-    description: str | None = None
     starts_at: datetime
     ends_at: datetime
     location: str | None = None
+    description: str | None = None
+
 
 @dataclass
 class ReminderEventDTO:
@@ -98,5 +100,6 @@ class ReminderParticipantDTO:
 @dataclass
 class ReminderPileDTO:
     """DTO для напоминания об ивенте сразу пачке людей"""
+
     event: ReminderEventDTO
     participants: list[ReminderParticipantDTO]
