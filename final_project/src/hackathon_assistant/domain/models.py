@@ -62,6 +62,7 @@ class Hackathon:
     end_at: datetime = field(default_factory=datetime.now)
     is_active: bool = True
     id: int | None = None
+    location: str | None = None
 
     def __post_init__(self) -> None:
         _require_non_empty(self.code, "Код хакатона не может быть пустым")
