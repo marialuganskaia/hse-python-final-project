@@ -2,8 +2,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from hackathon_assistant.domain.models import UserRole
-from hackathon_assistant.use_cases.start_user import StartUserUseCase
+from final_project.src.hackathon_assistant.domain.models import UserRole
+from final_project.src.hackathon_assistant.use_cases.start_user import StartUserUseCase
 
 
 class TestStartUserUseCase:

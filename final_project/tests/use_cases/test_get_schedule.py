@@ -2,8 +2,8 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from hackathon_assistant.domain.models import Event, EventType
-from hackathon_assistant.use_cases.get_schedule import GetScheduleUseCase
+from final_project.src.hackathon_assistant.domain.models import Event, EventType
+from final_project.src.hackathon_assistant.use_cases.get_schedule import GetScheduleUseCase
 
 
 class TestGetScheduleUseCase:
