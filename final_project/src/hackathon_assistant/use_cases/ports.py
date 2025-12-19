@@ -1,8 +1,3 @@
-"""
-Черновые интерфейсы репозиториев
-На основе сценариев из документации
-"""
-
 from dataclasses import dataclass
 from typing import Protocol
 

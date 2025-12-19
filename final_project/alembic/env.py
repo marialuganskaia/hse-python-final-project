@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import sys
 from logging.config import fileConfig
 
 from alembic import context
@@ -17,6 +18,9 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+src_path = os.path.join(project_root, "src")
+sys.path.insert(0, src_path)
 # Import metadata for autogenerate
 from hackathon_assistant.adapters.db.models import Base  # noqa: E402
 
