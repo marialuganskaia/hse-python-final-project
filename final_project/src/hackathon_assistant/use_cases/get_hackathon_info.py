@@ -22,7 +22,7 @@ class GetHackathonInfoUseCase:
         subscription = await self.subscription_repo.get_user_subscription(
             user_id=user.id, hackathon_id=hackathon.id
         )
-        is_subscribed = subscription is not None and subscription.is_active
+        is_subscribed = subscription is not None and subscription.enabled
 
         hackathon_dto = HackathonDTO(
             id=hackathon.id,
@@ -31,8 +31,10 @@ class GetHackathonInfoUseCase:
             description=hackathon.description,
             start_at=hackathon.start_at,
             end_at=hackathon.end_at,
-            location=hackathon.location,
             is_active=hackathon.is_active,
+            location=hackathon.location if hasattr(hackathon, 'location') else None
         )
+
+        return hackathon_dto, is_subscribed
 
         return hackathon_dto, is_subscribed

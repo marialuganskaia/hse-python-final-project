@@ -51,14 +51,14 @@ class BroadcastTargetDTO:
 @dataclass
 class HackathonDTO:
     """DTO для информации о хакатоне"""
-
+    id: int
     name: str
-    start_date: datetime
-    end_date: datetime
-    description: str | None = None
+    code: str
+    description: str
+    start_at: datetime
+    end_at: datetime
+    is_active: bool
     location: str | None = None
-    code: str | None = None
-
 
 @dataclass
 class BroadcastResultDTO:
