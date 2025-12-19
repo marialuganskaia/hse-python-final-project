@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock
 
@@ -19,6 +21,12 @@ from final_project.src.hackathon_assistant.use_cases.get_admin_stats import GetA
 from final_project.src.hackathon_assistant.use_cases.send_broadcast import SendBroadcastUseCase
 from final_project.src.hackathon_assistant.use_cases.finish_hackathon import FinishHackathonUseCase
 from final_project.src.hackathon_assistant.use_cases.get_hackathon_info import GetHackathonInfoUseCase
+from final_project.src.hackathon_assistant.use_cases.create_hackathon import CreateHackathonFromConfigUseCase
+from final_project.src.hackathon_assistant.use_cases.process_reminder import ProcessRemindersUseCase
+from final_project.src.hackathon_assistant.use_cases.send_reminder import SendRemindersUseCase
+from final_project.src.hackathon_assistant.use_cases.dto import (
+    ReminderPileDTO, ReminderEventDTO, ReminderParticipantDTO
+)
 
 
 @pytest.fixture
@@ -54,6 +62,10 @@ def mock_rules_repo():
 @pytest.fixture
 def mock_subscription_repo():
     """Фикстура мока SubscriptionRepository."""
+    return AsyncMock()
+
+@pytest.fixture
+def mock_notifier():
     return AsyncMock()
 
 
@@ -97,6 +109,7 @@ def sample_hackathon():
         start_at=now,
         end_at=now + timedelta(days=3),
         is_active=True,
+        location="Test Location"
     )
 
 
@@ -171,9 +184,87 @@ def use_case_finish_hackathon(mock_hackathon_repo, mock_subscription_repo):
 
 @pytest.fixture
 def use_case_get_hackathon_info(mock_user_repo, mock_hackathon_repo, mock_subscription_repo):
-    from final_project.src.hackathon_assistant.use_cases.get_hackathon_info import GetHackathonInfoUseCase
     return GetHackathonInfoUseCase(
         user_repo=mock_user_repo,
         hackathon_repo=mock_hackathon_repo,
         subscription_repo=mock_subscription_repo
+    )
+
+@pytest.fixture
+def use_case_create_hackathon(mock_hackathon_repo, mock_event_repo, mock_faq_repo, mock_rules_repo):
+    return CreateHackathonFromConfigUseCase(
+        hackathon_repo=mock_hackathon_repo,
+        event_repo=mock_event_repo,
+        faq_repo=mock_faq_repo,
+        rules_repo=mock_rules_repo
+    )
+
+@pytest.fixture
+def sample_config() -> dict[str, Any]:
+    """Пример конфига для тестов"""
+    now = datetime.now()
+    return {
+        "name": "Test Hackathon 2024",
+        "code": "TEST2024",
+        "description": "Test description",
+        "start_at": now,
+        "end_at": now + timedelta(days=2),
+        "is_active": True,
+        "events": [
+            {
+                "title": "Opening Ceremony",
+                "type": EventType.OTHER,
+                "starts_at": now,
+                "ends_at": now + timedelta(hours=1),
+                "location": "Main Hall",
+                "description": "Welcome speech"
+            },
+            {
+                "title": "Workshop",
+                "type": EventType.LECTURE,
+                "starts_at": now + timedelta(hours=2),
+                "ends_at": now + timedelta(hours=3),
+                "location": "Room 101",
+                "description": "Python workshop"
+            }
+        ],
+        "rules": {
+            "content": "1. Be respectful\n2. No cheating\n3. Have fun!"
+        },
+        "faq": [
+            {
+                "question": "What is the team size?",
+                "answer": "2-5 people per team"
+            },
+            {
+                "question": "Is food provided?",
+                "answer": "Yes, meals and snacks will be provided"
+            }
+        ]
+    }
+
+@pytest.fixture
+def use_case_process_reminder(mock_event_repo, mock_subscription_repo):
+    return ProcessRemindersUseCase(
+        event_repo=mock_event_repo,
+        subscription_repo=mock_subscription_repo
+    )
+
+@pytest.fixture
+def use_case_send_reminder(mock_notifier):
+    return SendRemindersUseCase(notifier=mock_notifier)
+
+@pytest.fixture
+def sample_pile():
+    """Пример ReminderPileDTO для тестов"""
+    return ReminderPileDTO(
+        event=ReminderEventDTO(
+            event_id=1,
+            title="Тестовое событие",
+            starts_at=datetime.now() + timedelta(minutes=30)
+        ),
+        participants=[
+            ReminderParticipantDTO(user_id=1, telegram_id=111),
+            ReminderParticipantDTO(user_id=2, telegram_id=222)
+        ]
     )
