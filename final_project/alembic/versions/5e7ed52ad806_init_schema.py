@@ -96,4 +96,6 @@ def downgrade() -> None:
     op.drop_table('events')
     op.drop_index(op.f('ix_hackathons_code'), table_name='hackathons')
     op.drop_table('hackathons')
+    op.execute("DROP TYPE IF EXISTS eventtype")
+    op.execute("DROP TYPE IF EXISTS userrole")
     # ### end Alembic commands ###

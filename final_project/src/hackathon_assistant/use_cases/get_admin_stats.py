@@ -18,10 +18,10 @@ class GetAdminStatsUseCase:
         participants = sum(1 for u in users if u.role == UserRole.PARTICIPANT)
         organizers = sum(1 for u in users if u.role == UserRole.ORGANIZER)
         subscribed_users = await self.subscription_repo.count_all_subscribed()
-    
+
         return AdminStatsDTO(
             total_users=total_users,
             participants=participants,
             organizers=organizers,
-            subscribed_users=subscribed_users
+            subscribed_users=subscribed_users,
         )

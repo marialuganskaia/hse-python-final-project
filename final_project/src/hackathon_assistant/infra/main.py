@@ -39,6 +39,7 @@ async def main() -> None:
     reminder_service = None
     try:
         from ..adapters.bot.reminders import ReminderService
+
         REMINDERS_ENABLED = True
     except ImportError:
         REMINDERS_ENABLED = False
@@ -47,11 +48,15 @@ async def main() -> None:
     if REMINDERS_ENABLED:
         try:
             from ..adapters.bot.reminders import ReminderService
+
             reminder_service = ReminderService(bot, build_use_case_provider)
-            
-            await reminder_service.start_periodic_reminders(interval_minutes=5)
+
+            if settings.reminders_enabled:
+                await reminder_service.start_periodic_reminders(
+                    interval_minutes=settings.reminder_interval_minutes
+                )
             logger.info("Reminder service started")
-            
+
         except Exception as e:
             logger.error(f"Failed to start reminder service: {e}")
             reminder_service = None

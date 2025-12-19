@@ -5,7 +5,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
-from ..use_cases.dto import BroadcastResultDTO
+from hackathon_assistant.use_cases.dto import BroadcastResultDTO
 
 from .formatters import (
     format_admin_stats,
@@ -38,7 +38,6 @@ async def cmd_admin_stats(message: types.Message, use_cases: UseCaseProvider) ->
     except Exception as e:
         print(f"Error in /admin_stats: {e}")
         await message.answer("📊 Статистика временно недоступна.")
-    
 
 
 @admin_router.message(Command("admin_broadcast"))
@@ -127,7 +126,7 @@ async def confirm_broadcast(
     try:
         data = await state.get_data()
         __hackathon_id = data.get("hackathon_id")
-        message_text = data.get("message_text")
+        _message_text = data.get("message_text")
 
         await callback.message.edit_text("🔄 *Отправка рассылки...*", parse_mode="Markdown")
 

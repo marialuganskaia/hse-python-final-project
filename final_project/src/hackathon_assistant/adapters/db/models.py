@@ -21,7 +21,7 @@ class UserORM(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     telegram_id = Column(BigInteger, unique=True, nullable=False, index=True)
-    username = Column(String(255), nullable=False, default="")
+    username = Column(String(255), nullable=True, default="")
     first_name = Column(String(255), default="")
     last_name = Column(String(255), default="")
     role = Column(Enum(UserRole), nullable=False)

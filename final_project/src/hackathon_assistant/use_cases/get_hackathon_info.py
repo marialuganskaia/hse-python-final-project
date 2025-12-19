@@ -37,3 +37,4 @@ class GetHackathonInfoUseCase:
 
         return hackathon_dto, is_subscribed
 
+        return hackathon_dto, is_subscribed
