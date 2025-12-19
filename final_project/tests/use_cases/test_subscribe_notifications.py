@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from hackathon_assistant.use_cases.notifications import SubscribeNotificationsUseCase
+from final_project.src.hackathon_assistant.use_cases.notifications import SubscribeNotificationsUseCase
 
 
 class TestSubscribeNotificationsUseCase:

@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from hackathon_assistant.domain.models import (
+from final_project.src.hackathon_assistant.domain.models import (
     Event,
     EventType,
     FAQItem,
@@ -15,6 +15,10 @@ from hackathon_assistant.domain.models import (
     User,
     UserRole,
 )
+from final_project.src.hackathon_assistant.use_cases.get_admin_stats import GetAdminStatsUseCase
+from final_project.src.hackathon_assistant.use_cases.send_broadcast import SendBroadcastUseCase
+from final_project.src.hackathon_assistant.use_cases.finish_hackathon import FinishHackathonUseCase
+from final_project.src.hackathon_assistant.use_cases.get_hackathon_info import GetHackathonInfoUseCase
 
 
 @pytest.fixture
@@ -141,4 +145,35 @@ def sample_subscription():
         user_id=1,
         hackathon_id=1,
         enabled=True,
+    )
+
+@pytest.fixture
+def use_case_admin_stats(mock_user_repo, mock_subscription_repo, mock_hackathon_repo):
+    return GetAdminStatsUseCase(
+        user_repo=mock_user_repo,
+        subscription_repo=mock_subscription_repo,
+        hackathon_repo=mock_hackathon_repo
+    )
+
+@pytest.fixture
+def use_case_send_broadcast(mock_user_repo, mock_subscription_repo):
+    return SendBroadcastUseCase(
+        user_repo=mock_user_repo,
+        subscription_repo=mock_subscription_repo
+    )
+
+@pytest.fixture
+def use_case_finish_hackathon(mock_hackathon_repo, mock_subscription_repo):
+    return FinishHackathonUseCase(
+        hackathon_repo=mock_hackathon_repo,
+        subscription_repo=mock_subscription_repo
+    )
+
+@pytest.fixture
+def use_case_get_hackathon_info(mock_user_repo, mock_hackathon_repo, mock_subscription_repo):
+    from final_project.src.hackathon_assistant.use_cases.get_hackathon_info import GetHackathonInfoUseCase
+    return GetHackathonInfoUseCase(
+        user_repo=mock_user_repo,
+        hackathon_repo=mock_hackathon_repo,
+        subscription_repo=mock_subscription_repo
     )

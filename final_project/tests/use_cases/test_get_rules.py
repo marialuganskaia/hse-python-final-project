@@ -1,7 +1,7 @@
 import pytest
 
-from hackathon_assistant.use_cases.dto import RulesDTO
-from hackathon_assistant.use_cases.get_rules import GetRulesUseCase
+from final_project.src.hackathon_assistant.use_cases.dto import RulesDTO
+from final_project.src.hackathon_assistant.use_cases.get_rules import GetRulesUseCase
 
 
 class TestGetRulesUseCase:
