@@ -1,9 +1,8 @@
-import pytest
 from datetime import datetime, timedelta
 
-from final_project.src.hackathon_assistant.domain.models import (
-    Hackathon, Event, FAQItem, Rules, EventType
-)
+import pytest
+
+from hackathon_assistant.domain.models import Event, EventType, FAQItem, Hackathon, Rules
 
 
 class TestCreateHackathonFromConfigUseCase:
@@ -11,8 +10,13 @@ class TestCreateHackathonFromConfigUseCase:
 
     @pytest.mark.asyncio
     async def test_create_hackathon_with_all_data(
-            self, use_case_create_hackathon, mock_hackathon_repo, mock_event_repo,
-            mock_faq_repo, mock_rules_repo, sample_config
+        self,
+        use_case_create_hackathon,
+        mock_hackathon_repo,
+        mock_event_repo,
+        mock_faq_repo,
+        mock_rules_repo,
+        sample_config,
     ):
         """Создание хакатона со всеми данными: событиями, правилами и FAQ"""
         saved_hackathon = Hackathon(
@@ -22,7 +26,7 @@ class TestCreateHackathonFromConfigUseCase:
             description=sample_config["description"],
             start_at=sample_config["start_at"],
             end_at=sample_config["end_at"],
-            is_active=sample_config["is_active"]
+            is_active=sample_config["is_active"],
         )
         mock_hackathon_repo.save.return_value = saved_hackathon
 
@@ -31,26 +35,17 @@ class TestCreateHackathonFromConfigUseCase:
                 id=i,
                 hackathon_id=1,
                 **{k: v for k, v in event.items() if k != "type"},
-                type=event["type"]
+                type=event["type"],
             )
             for i, event in enumerate(sample_config["events"], 1)
         ]
         mock_event_repo.save_all.return_value = saved_events
 
-        saved_rules = Rules(
-            id=1,
-            hackathon_id=1,
-            content=sample_config["rules"]["content"]
-        )
+        saved_rules = Rules(id=1, hackathon_id=1, content=sample_config["rules"]["content"])
         mock_rules_repo.save.return_value = saved_rules
 
         saved_faq_items = [
-            FAQItem(
-                id=i,
-                hackathon_id=1,
-                question=item["question"],
-                answer=item["answer"]
-            )
+            FAQItem(id=i, hackathon_id=1, question=item["question"], answer=item["answer"])
             for i, item in enumerate(sample_config["faq"], 1)
         ]
         mock_faq_repo.save_all.return_value = saved_faq_items
@@ -92,8 +87,12 @@ class TestCreateHackathonFromConfigUseCase:
 
     @pytest.mark.asyncio
     async def test_create_hackathon_with_events_only(
-            self, use_case_create_hackathon, mock_hackathon_repo, mock_event_repo,
-            mock_faq_repo, mock_rules_repo
+        self,
+        use_case_create_hackathon,
+        mock_hackathon_repo,
+        mock_event_repo,
+        mock_faq_repo,
+        mock_rules_repo,
     ):
         """Создание хакатона только с событиями"""
         now = datetime.now()
@@ -110,8 +109,7 @@ class TestCreateHackathonFromConfigUseCase:
                     "starts_at": now + timedelta(hours=1),
                     "ends_at": now + timedelta(hours=2),
                 }
-            ]
-
+            ],
         }
 
         saved_hackathon = Hackathon(
@@ -121,7 +119,7 @@ class TestCreateHackathonFromConfigUseCase:
             description="",
             start_at=config["start_at"],
             end_at=config["end_at"],
-            is_active=False
+            is_active=False,
         )
         mock_hackathon_repo.save.return_value = saved_hackathon
 
@@ -133,7 +131,7 @@ class TestCreateHackathonFromConfigUseCase:
             starts_at=config["events"][0]["starts_at"],
             ends_at=config["events"][0]["ends_at"],
             location=None,
-            description=None
+            description=None,
         )
         mock_event_repo.save_all.return_value = [saved_event]
 
@@ -156,8 +154,12 @@ class TestCreateHackathonFromConfigUseCase:
 
     @pytest.mark.asyncio
     async def test_create_hackathon_empty_events_list(
-            self, use_case_create_hackathon, mock_hackathon_repo, mock_event_repo,
-            mock_faq_repo, mock_rules_repo
+        self,
+        use_case_create_hackathon,
+        mock_hackathon_repo,
+        mock_event_repo,
+        mock_faq_repo,
+        mock_rules_repo,
     ):
         """Создание хакатона с пустым списком событий"""
         now = datetime.now()
@@ -168,7 +170,7 @@ class TestCreateHackathonFromConfigUseCase:
             "end_at": now + timedelta(days=1),
             "events": [],
             "rules": {"content": "Test rules"},
-            "faq": []
+            "faq": [],
         }
 
         saved_hackathon = Hackathon(
@@ -178,15 +180,11 @@ class TestCreateHackathonFromConfigUseCase:
             description="",
             start_at=config["start_at"],
             end_at=config["end_at"],
-            is_active=True
+            is_active=True,
         )
         mock_hackathon_repo.save.return_value = saved_hackathon
 
-        saved_rules = Rules(
-            id=1,
-            hackathon_id=1,
-            content=config["rules"]["content"]
-        )
+        saved_rules = Rules(id=1, hackathon_id=1, content=config["rules"]["content"])
         mock_rules_repo.save.return_value = saved_rules
 
         result = await use_case_create_hackathon.execute(config)
@@ -198,4 +196,3 @@ class TestCreateHackathonFromConfigUseCase:
         mock_faq_repo.save_all.assert_not_called()
 
         assert result.id == 1
-

@@ -32,7 +32,7 @@ class GetHackathonInfoUseCase:
             start_at=hackathon.start_at,
             end_at=hackathon.end_at,
             is_active=hackathon.is_active,
-            location=hackathon.location if hasattr(hackathon, 'location') else None
+            location=hackathon.location if hasattr(hackathon, "location") else None,
         )
 
         return hackathon_dto, is_subscribed

@@ -1,8 +1,11 @@
-import pytest
 from datetime import datetime, timedelta
 
-from final_project.src.hackathon_assistant.use_cases.dto import (
-    ReminderPileDTO, ReminderEventDTO, ReminderParticipantDTO
+import pytest
+
+from hackathon_assistant.use_cases.dto import (
+    ReminderEventDTO,
+    ReminderParticipantDTO,
+    ReminderPileDTO,
 )
 
 
@@ -10,7 +13,9 @@ class TestSendRemindersUseCase:
     """Тесты для SendRemindersUseCase"""
 
     @pytest.mark.asyncio
-    async def test_send_reminders_single_pile(self, use_case_send_reminder, mock_notifier, sample_pile):
+    async def test_send_reminders_single_pile(
+        self, use_case_send_reminder, mock_notifier, sample_pile
+    ):
         """Отправка напоминаний для одного события с несколькими участниками"""
         piles = [sample_pile]
 
@@ -33,13 +38,17 @@ class TestSendRemindersUseCase:
 
         piles = [
             ReminderPileDTO(
-                event=ReminderEventDTO(event_id=1, title="Событие 1", starts_at=now + timedelta(hours=1)),
-                participants=[ReminderParticipantDTO(user_id=1, telegram_id=111)]
+                event=ReminderEventDTO(
+                    event_id=1, title="Событие 1", starts_at=now + timedelta(hours=1)
+                ),
+                participants=[ReminderParticipantDTO(user_id=1, telegram_id=111)],
             ),
             ReminderPileDTO(
-                event=ReminderEventDTO(event_id=2, title="Событие 2", starts_at=now + timedelta(hours=2)),
-                participants=[ReminderParticipantDTO(user_id=2, telegram_id=222)]
-            )
+                event=ReminderEventDTO(
+                    event_id=2, title="Событие 2", starts_at=now + timedelta(hours=2)
+                ),
+                participants=[ReminderParticipantDTO(user_id=2, telegram_id=222)],
+            ),
         ]
 
         await use_case_send_reminder.execute(piles)
@@ -60,11 +69,13 @@ class TestSendRemindersUseCase:
         mock_notifier.send.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_send_reminders_pile_without_participants(self, use_case_send_reminder, mock_notifier):
+    async def test_send_reminders_pile_without_participants(
+        self, use_case_send_reminder, mock_notifier
+    ):
         """Событие без участников"""
         pile = ReminderPileDTO(
             event=ReminderEventDTO(event_id=1, title="Событие", starts_at=datetime.now()),
-            participants=[]
+            participants=[],
         )
 
         await use_case_send_reminder.execute([pile])
@@ -76,12 +87,8 @@ class TestSendRemindersUseCase:
         """Проверка формата сообщения"""
         now = datetime.now()
         pile = ReminderPileDTO(
-            event=ReminderEventDTO(
-                event_id=1,
-                title="Важное собрание",
-                starts_at=now
-            ),
-            participants=[ReminderParticipantDTO(user_id=1, telegram_id=123)]
+            event=ReminderEventDTO(event_id=1, title="Важное собрание", starts_at=now),
+            participants=[ReminderParticipantDTO(user_id=1, telegram_id=123)],
         )
 
         await use_case_send_reminder.execute([pile])

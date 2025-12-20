@@ -1,8 +1,9 @@
-import pytest
 from datetime import datetime, timedelta
 
-from final_project.src.hackathon_assistant.domain.models import User, Hackathon, ReminderSubscription, UserRole
-from final_project.src.hackathon_assistant.use_cases.dto import HackathonDTO
+import pytest
+
+from hackathon_assistant.domain.models import Hackathon, ReminderSubscription, User, UserRole
+from hackathon_assistant.use_cases.dto import HackathonDTO
 
 
 class TestGetHackathonInfoUseCase:
@@ -10,25 +11,20 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_success_with_active_subscription(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo, sample_hackathon
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
+        sample_hackathon,
     ):
         """Успешное получение информации о хакатоне с активной подпиской"""
-        user = User(
-            id=1,
-            telegram_id=123456789,
-            username="test_user",
-            current_hackathon_id=1
-        )
+        user = User(id=1, telegram_id=123456789, username="test_user", current_hackathon_id=1)
         mock_user_repo.get_by_telegram_id.return_value = user
 
         mock_hackathon_repo.get_by_id.return_value = sample_hackathon
 
-        subscription = ReminderSubscription(
-            id=1,
-            user_id=1,
-            hackathon_id=1,
-            enabled=True
-        )
+        subscription = ReminderSubscription(id=1, user_id=1, hackathon_id=1, enabled=True)
         mock_subscription_repo.get_user_subscription.return_value = subscription
 
         result = await use_case_get_hackathon_info.execute(telegram_id=123456789)
@@ -50,15 +46,15 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_success_without_subscription(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo, sample_hackathon
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
+        sample_hackathon,
     ):
         """Успешное получение информации о хакатоне без подписки"""
-        user = User(
-            id=1,
-            telegram_id=123456789,
-            username="test_user",
-            current_hackathon_id=1
-        )
+        user = User(id=1, telegram_id=123456789, username="test_user", current_hackathon_id=1)
         mock_user_repo.get_by_telegram_id.return_value = user
 
         mock_hackathon_repo.get_by_id.return_value = sample_hackathon
@@ -74,25 +70,20 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_success_with_inactive_subscription(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo, sample_hackathon
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
+        sample_hackathon,
     ):
         """Успешное получение информации о хакатоне с неактивной подпиской"""
-        user = User(
-            id=1,
-            telegram_id=123456789,
-            username="test_user",
-            current_hackathon_id=1
-        )
+        user = User(id=1, telegram_id=123456789, username="test_user", current_hackathon_id=1)
         mock_user_repo.get_by_telegram_id.return_value = user
 
         mock_hackathon_repo.get_by_id.return_value = sample_hackathon
 
-        subscription = ReminderSubscription(
-            id=1,
-            user_id=1,
-            hackathon_id=1,
-            enabled=False
-        )
+        subscription = ReminderSubscription(id=1, user_id=1, hackathon_id=1, enabled=False)
         mock_subscription_repo.get_user_subscription.return_value = subscription
 
         result = await use_case_get_hackathon_info.execute(telegram_id=123456789)
@@ -103,7 +94,11 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_user_not_found(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
     ):
         """Пользователь не найден"""
         mock_user_repo.get_by_telegram_id.return_value = None
@@ -119,15 +114,14 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_no_hackathon_selected(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
     ):
         """У пользователя нет выбранного хакатона"""
-        user = User(
-            id=1,
-            telegram_id=123456789,
-            username="test_user",
-            current_hackathon_id=None
-        )
+        user = User(id=1, telegram_id=123456789, username="test_user", current_hackathon_id=None)
         mock_user_repo.get_by_telegram_id.return_value = user
 
         result = await use_case_get_hackathon_info.execute(telegram_id=123456789)
@@ -141,15 +135,14 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_hackathon_not_found(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
     ):
         """Хакатон не найден"""
-        user = User(
-            id=1,
-            telegram_id=123456789,
-            username="test_user",
-            current_hackathon_id=999
-        )
+        user = User(id=1, telegram_id=123456789, username="test_user", current_hackathon_id=999)
         mock_user_repo.get_by_telegram_id.return_value = user
 
         mock_hackathon_repo.get_by_id.return_value = None
@@ -165,15 +158,15 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_all_fields_mapped(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo, sample_hackathon
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
+        sample_hackathon,
     ):
         """Проверка что все поля хакатона правильно мапятся в DTO"""
-        user = User(
-            id=1,
-            telegram_id=123456789,
-            username="test_user",
-            current_hackathon_id=1
-        )
+        user = User(id=1, telegram_id=123456789, username="test_user", current_hackathon_id=1)
         mock_user_repo.get_by_telegram_id.return_value = user
 
         mock_hackathon_repo.get_by_id.return_value = sample_hackathon
@@ -196,7 +189,11 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_inactive_hackathon(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
     ):
         """Получение информации о неактивном хакатоне"""
         now = datetime.now()
@@ -208,15 +205,10 @@ class TestGetHackathonInfoUseCase:
             start_at=now - timedelta(days=30),
             end_at=now - timedelta(days=27),
             is_active=False,
-            location="Old Location"
+            location="Old Location",
         )
 
-        user = User(
-            id=1,
-            telegram_id=123456789,
-            username="test_user",
-            current_hackathon_id=3
-        )
+        user = User(id=1, telegram_id=123456789, username="test_user", current_hackathon_id=3)
         mock_user_repo.get_by_telegram_id.return_value = user
         mock_hackathon_repo.get_by_id.return_value = inactive_hackathon
         mock_subscription_repo.get_user_subscription.return_value = None
@@ -231,7 +223,12 @@ class TestGetHackathonInfoUseCase:
 
     @pytest.mark.asyncio
     async def test_get_hackathon_info_organizer_user(
-            self, use_case_get_hackathon_info, mock_user_repo, mock_hackathon_repo, mock_subscription_repo, sample_hackathon
+        self,
+        use_case_get_hackathon_info,
+        mock_user_repo,
+        mock_hackathon_repo,
+        mock_subscription_repo,
+        sample_hackathon,
     ):
         """Организатор получает информацию о хакатоне"""
         organizer = User(
@@ -241,7 +238,7 @@ class TestGetHackathonInfoUseCase:
             first_name="Admin",
             last_name="User",
             role=UserRole.ORGANIZER,
-            current_hackathon_id=1
+            current_hackathon_id=1,
         )
 
         mock_user_repo.get_by_telegram_id.return_value = organizer

@@ -1,8 +1,8 @@
-from dataclasses import dataclass
-from typing import Any, Coroutine
+from __future__ import annotations
 
-from final_project.src.hackathon_assistant.use_cases.dto import BroadcastTargetDTO
-from .dto import BroadcastResultDTO, BroadcastTargetDTO
+from dataclasses import dataclass
+
+from .dto import BroadcastTargetDTO
 from .ports import SubscriptionRepository, UserRepository
 
 
