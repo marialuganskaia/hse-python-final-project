@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from hackathon_assistant.domain.models import Hackathon, ReminderSubscription, User, UserRole
-from hackathon_assistant.use_cases.dto import HackathonDTO
+from final_project.src.hackathon_assistant.domain.models import Hackathon, ReminderSubscription, User, UserRole
+from final_project.src.hackathon_assistant.use_cases.dto import HackathonDTO
 
 
 class TestGetHackathonInfoUseCase:

@@ -1,7 +1,7 @@
 import pytest
 
-from hackathon_assistant.domain.models import User, UserRole
-from hackathon_assistant.use_cases.dto import AdminStatsDTO
+from final_project.src.hackathon_assistant.domain.models import User, UserRole
+from final_project.src.hackathon_assistant.use_cases.dto import AdminStatsDTO
 
 
 class TestGetAdminStatsUseCase:
