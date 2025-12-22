@@ -1,8 +1,8 @@
 import pytest
 
-from hackathon_assistant.domain.models import FAQItem
-from hackathon_assistant.use_cases.dto import FAQItemDTO
-from hackathon_assistant.use_cases.get_faq import GetFAQUseCase
+from final_project.src.hackathon_assistant.domain.models import FAQItem
+from final_project.src.hackathon_assistant.use_cases.dto import FAQItemDTO
+from final_project.src.hackathon_assistant.use_cases.get_faq import GetFAQUseCase
 
 
 class TestGetFAQUseCase:

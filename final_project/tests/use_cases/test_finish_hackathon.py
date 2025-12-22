@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from hackathon_assistant.domain.models import Hackathon, ReminderSubscription
+from final_project.src.hackathon_assistant.domain.models import Hackathon, ReminderSubscription
 
 
 class TestFinishHackathonUseCase:

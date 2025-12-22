@@ -1,7 +1,7 @@
 import pytest
 
-from hackathon_assistant.domain.models import ReminderSubscription, User, UserRole
-from hackathon_assistant.use_cases.dto import BroadcastTargetDTO
+from final_project.src.hackathon_assistant.domain.models import ReminderSubscription, User, UserRole
+from final_project.src.hackathon_assistant.use_cases.dto import BroadcastTargetDTO
 
 
 class TestSendBroadcastUseCase:

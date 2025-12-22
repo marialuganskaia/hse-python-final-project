@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from hackathon_assistant.use_cases.dto import (
+from final_project.src.hackathon_assistant.use_cases.dto import (
     ReminderEventDTO,
     ReminderParticipantDTO,
     ReminderPileDTO,

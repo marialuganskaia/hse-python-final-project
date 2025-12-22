@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from hackathon_assistant.domain.models import (
+from final_project.src.hackathon_assistant.domain.models import (
     Event,
     EventType,
     FAQItem,
@@ -16,18 +16,18 @@ from hackathon_assistant.domain.models import (
     User,
     UserRole,
 )
-from hackathon_assistant.use_cases.create_hackathon import CreateHackathonFromConfigUseCase
-from hackathon_assistant.use_cases.dto import (
+from final_project.src.hackathon_assistant.use_cases.create_hackathon import CreateHackathonFromConfigUseCase
+from final_project.src.hackathon_assistant.use_cases.dto import (
     ReminderEventDTO,
     ReminderParticipantDTO,
     ReminderPileDTO,
 )
-from hackathon_assistant.use_cases.finish_hackathon import FinishHackathonUseCase
-from hackathon_assistant.use_cases.get_admin_stats import GetAdminStatsUseCase
-from hackathon_assistant.use_cases.get_hackathon_info import GetHackathonInfoUseCase
-from hackathon_assistant.use_cases.process_reminder import ProcessRemindersUseCase
-from hackathon_assistant.use_cases.send_broadcast import SendBroadcastUseCase
-from hackathon_assistant.use_cases.send_reminder import SendRemindersUseCase
+from final_project.src.hackathon_assistant.use_cases.finish_hackathon import FinishHackathonUseCase
+from final_project.src.hackathon_assistant.use_cases.get_admin_stats import GetAdminStatsUseCase
+from final_project.src.hackathon_assistant.use_cases.get_hackathon_info import GetHackathonInfoUseCase
+from final_project.src.hackathon_assistant.use_cases.process_reminder import ProcessRemindersUseCase
+from final_project.src.hackathon_assistant.use_cases.send_broadcast import SendBroadcastUseCase
+from final_project.src.hackathon_assistant.use_cases.send_reminder import SendRemindersUseCase
 
 
 @pytest.fixture
