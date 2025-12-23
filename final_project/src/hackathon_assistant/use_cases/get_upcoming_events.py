@@ -1,8 +1,9 @@
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 
 from ..domain.models import Event
 from .ports import EventRepository
+
 
 @dataclass
 class GetUpcomingEventsUseCase:
