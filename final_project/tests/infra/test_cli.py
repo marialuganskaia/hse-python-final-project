@@ -5,8 +5,9 @@ from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, call, patch
 
 import pytest
-from final_project.src.hackathon_assistant.domain.models import EventType, Hackathon
-from final_project.src.hackathon_assistant.infra.cli import CLI, _normalize_config, _parse_dt
+
+from hackathon_assistant.domain.models import EventType, Hackathon
+from hackathon_assistant.infra.cli import CLI, _normalize_config, _parse_dt
 
 
 def test_cli_parser():
@@ -30,12 +31,8 @@ async def test_cli_db_ping_success():
     mock_settings = MagicMock()
     mock_settings.database_url = "test://database"
 
-    with patch(
-        "final_project.src.hackathon_assistant.infra.cli.get_settings", return_value=mock_settings
-    ):
-        with patch(
-            "final_project.src.hackathon_assistant.infra.cli.db_ping", AsyncMock(return_value=True)
-        ):
+    with patch("hackathon_assistant.infra.cli.get_settings", return_value=mock_settings):
+        with patch("hackathon_assistant.infra.cli.db_ping", AsyncMock(return_value=True)):
             with patch("builtins.print") as mock_print:
                 args = argparse.Namespace()
                 result = await cli._cmd_db_ping(args)
@@ -57,12 +54,8 @@ async def test_cli_db_ping_failure():
     mock_settings = MagicMock()
     mock_settings.database_url = "test://database"
 
-    with patch(
-        "final_project.src.hackathon_assistant.infra.cli.get_settings", return_value=mock_settings
-    ):
-        with patch(
-            "final_project.src.hackathon_assistant.infra.cli.db_ping", AsyncMock(return_value=False)
-        ):
+    with patch("hackathon_assistant.infra.cli.get_settings", return_value=mock_settings):
+        with patch("hackathon_assistant.infra.cli.db_ping", AsyncMock(return_value=False)):
             with patch("builtins.print") as mock_print:
                 args = argparse.Namespace()
                 result = await cli._cmd_db_ping(args)
@@ -165,10 +158,8 @@ async def test_create_hackathon_success():
 
     try:
         # Мокаем все зависимости
-        with patch("final_project.src.hackathon_assistant.infra.cli.get_session") as mock_session:
-            with patch(
-                "final_project.src.hackathon_assistant.infra.cli.RepositoryProvider"
-            ) as mock_repo:
+        with patch("hackathon_assistant.infra.cli.get_session") as mock_session:
+            with patch("hackathon_assistant.infra.cli.RepositoryProvider") as mock_repo:
                 # Настраиваем моки
                 mock_session_instance = AsyncMock()
                 mock_session.return_value.__aenter__.return_value = mock_session_instance
@@ -224,10 +215,8 @@ async def test_create_hackathon_already_exists():
         config_path = Path(f.name)
 
     try:
-        with patch("final_project.src.hackathon_assistant.infra.cli.get_session") as mock_session:
-            with patch(
-                "final_project.src.hackathon_assistant.infra.cli.RepositoryProvider"
-            ) as mock_repo:
+        with patch("hackathon_assistant.infra.cli.get_session") as mock_session:
+            with patch("hackathon_assistant.infra.cli.RepositoryProvider") as mock_repo:
                 mock_session_instance = AsyncMock()
                 mock_session.return_value.__aenter__.return_value = mock_session_instance
 
@@ -259,11 +248,11 @@ async def test_create_hackathon_already_exists():
 
 def test_main_function():
     """Тест основной функции CLI"""
-    from final_project.src.hackathon_assistant.infra.cli import main
+    from hackathon_assistant.infra.cli import main
 
     # Тестируем с аргументами командной строки
     with patch("sys.argv", ["cli.py", "db-ping"]):
-        with patch("final_project.src.hackathon_assistant.infra.cli.CLI.run") as mock_run:
+        with patch("hackathon_assistant.infra.cli.CLI.run") as mock_run:
             mock_run.return_value = 0
             result = main(["db-ping"])
 

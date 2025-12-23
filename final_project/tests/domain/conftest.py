@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from final_project.src.hackathon_assistant.domain.models import EventType, UserRole
+from hackathon_assistant.domain.models import EventType, UserRole
 
 
 @pytest.fixture
