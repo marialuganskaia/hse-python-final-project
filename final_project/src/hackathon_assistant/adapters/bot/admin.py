@@ -41,7 +41,7 @@ async def cmd_admin_stats(message: types.Message, use_cases: UseCaseProvider) ->
             if not hackathon:
                 await message.answer(f"❌ Хакатон с кодом '{hack_code}' не найден.")
                 return
-            hackathon_id = hackathon.id 
+            hackathon_id = hackathon.id
 
         if not await is_organizer(message.from_user.id, use_cases):
             await message.answer("❌ Эта команда доступна только организаторам.")
