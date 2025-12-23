@@ -51,6 +51,7 @@ class ReminderService:
     async def _send_test_reminder(self):
         try:
             from datetime import datetime, timedelta
+
             from hackathon_assistant.use_cases.dto import EventDTO
 
             test_event = EventDTO(
@@ -76,6 +77,7 @@ class ReminderService:
     async def send_reminder_to_user(self, user, event, minutes_before: int):
         try:
             from .formatters import format_reminder_message
+
             message = format_reminder_message(event, minutes_before)
             await self.bot.send_message(user.telegram_id, message, parse_mode="Markdown")
             logger.info(f"Reminder sent to user {user.telegram_id}")
@@ -91,4 +93,3 @@ class ReminderService:
             logger.error(f"Format function not found: {e}")
         except Exception as e:
             logger.error(f"Failed to send reminder to user {user.telegram_id}: {e}")
-            

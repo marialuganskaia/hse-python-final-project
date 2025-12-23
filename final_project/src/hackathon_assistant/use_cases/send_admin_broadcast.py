@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from .dto import BroadcastResultDTO
+from .dto import BroadcastTargetDTO
 from .ports import SubscriptionRepository, UserRepository
 
 
@@ -13,10 +13,18 @@ class SendAdminBroadcastUseCase:
 
     async def execute(
         self, admin_user_id: int, message: str, hackathon_id: int | None = None
-    ) -> BroadcastResultDTO:
+    ) -> list[BroadcastTargetDTO]:
         """
         Отправить рассылку сообщения администратором
-        Возвращает: результат рассылки
         """
-        # TODO: реализовать
-        pass
+        users = await self.subscription_repo.get_subscribed_users(hackathon_id)
+
+        return [
+            BroadcastTargetDTO(
+                user_id=user.id,
+                telegram_id=user.telegram_id,
+                username=user.username or "",
+                first_name=user.first_name or "",
+            )
+            for user in users
+        ]

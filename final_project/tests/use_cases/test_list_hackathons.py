@@ -2,7 +2,7 @@ from dataclasses import replace
 
 import pytest
 
-from final_project.src.hackathon_assistant.use_cases.list_hackathons import ListHackathonsUseCase
+from hackathon_assistant.use_cases.list_hackathons import ListHackathonsUseCase
 
 
 class TestListHackathonsUseCase:

@@ -2,7 +2,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from final_project.src.hackathon_assistant.use_cases.notifications import UnsubscribeNotificationsUseCase
+from hackathon_assistant.use_cases.notifications import (
+    UnsubscribeNotificationsUseCase,
+)
 
 
 class TestUnsubscribeNotificationsUseCase:
