@@ -1,3 +1,4 @@
+import logging 
 from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -14,6 +15,8 @@ from .formatters import (
 )
 from .helpers import is_organizer
 
+logger = logging.getLogger(__name__)
+
 admin_router = Router(name="admin_router")
 
 
@@ -25,38 +28,128 @@ class BroadcastStates(StatesGroup):
 
 @admin_router.message(Command("admin_stats"))
 async def cmd_admin_stats(message: types.Message, use_cases: UseCaseProvider) -> None:
-    if not await is_organizer(message.from_user.id, use_cases):
-        await message.answer("❌ Эта команда доступна только организаторам.")
-        return
-
     try:
-        # Нужно получить hackathon_id или изменить use case
-        # Временное решение - передать 1 или None
-        stats = await use_cases.get_admin_stats.execute(hackathon_id=1)
+        parts = message.text.split(maxsplit=1)
+        hackathon_id = None
+
+        if len(parts) > 1:
+            hack_code = parts[1].strip()
+            hackathon = await use_cases.select_hackathon_by_code.execute(
+                telegram_id=message.from_user.id, hackathon_code=hack_code
+            )
+            if not hackathon:
+                await message.answer(f"❌ Хакатон с кодом '{hack_code}' не найден.")
+                return
+            hackathon_id = hackathon.id
+        
+        if not await is_organizer(message.from_user.id, use_cases):
+            await message.answer("❌ Эта команда доступна только организаторам.")
+            return
+        else:
+            hackathon_dto, _ = await use_cases.get_hackathon_info.execute(
+                telegram_id=message.from_user.id
+            )
+            if hackathon_dto:
+                hackathon_id = hackathon_dto.id
+            else:
+                await message.answer(
+                    "❌ У вас нет выбранного хакатона.\n"
+                    "Используйте: `/admin_stats <код_хакатона>`",
+                    parse_mode="Markdown",
+                )
+                return
+
+        if not await is_organizer(message.from_user.id, use_cases):
+            await message.answer("❌ Эта команда доступна только организаторам.")
+            return
+
+        stats = await use_cases.get_admin_stats.execute(hackathon_id=hackathon_id)
         text = format_admin_stats(stats)
         await message.answer(text)
+
     except Exception as e:
-        print(f"Error in /admin_stats: {e}")
-        await message.answer("📊 Статистика временно недоступна.")
+        logger.error(f"Error in /admin_stats: {e}")
+        await message.answer("❌ Ошибка при получении статистики.")
 
 
 @admin_router.message(Command("admin_broadcast"))
 async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider) -> None:
-    # Проверяем, является ли пользователь организатором
-    if not await is_organizer(message.from_user.id, use_cases):
-        await message.answer("❌ Эта команда доступна только организаторам.")
-        return
+    """Обработчик команды /admin_broadcast"""
+    try:
+        parts = message.text.split(maxsplit=2)
 
-    command_parts = message.text.split(maxsplit=2)
+        if len(parts) < 3:
+            await message.answer(
+                "❌ Использование: `/admin_broadcast <код_хакатона> <текст_сообщения>`\n\n"
+                "Пример: `/admin_broadcast HACK2024 Важное объявление!`",
+                parse_mode="Markdown",
+            )
+            return
 
-    if len(command_parts) < 3:
-        await message.answer("Использование: /admin_broadcast <hack_code> <текст сообщения>")
-        return
+        hack_code = parts[1].strip()
+        broadcast_message = parts[2].strip()
 
-    __hack_code = command_parts[1]
-    __broadcast_message = command_parts[2]
+        hackathon = await use_cases.select_hackathon_by_code.execute(
+            telegram_id=message.from_user.id, hackathon_code=hack_code
+        )
 
-    await message.answer("Рассылка пока не реализована.")
+        if not hackathon:
+            await message.answer(f"❌ Хакатон с кодом '{hack_code}' не найден.")
+            return
+
+        if not await is_organizer(message.from_user.id, use_cases):
+            await message.answer("❌ Эта команда доступна только организаторам.")
+            return
+        
+        from hackathon_assistant.use_cases.send_broadcast import SendBroadcastRequest
+        request = SendBroadcastRequest(
+            hackathon_id=hackathon.id,
+            message=broadcast_message
+        )
+        
+        targets_response = await use_cases.send_broadcast.execute(request)
+        targets = targets_response.targets  
+        sent_count = 0
+        failed_count = 0
+        
+        await message.answer(f"🔄 Рассылка для хакатона: {hackathon.name} ({len(targets)} получателей)")
+        
+        for target in targets:
+            try:
+                await message.bot.send_message(
+                    target.telegram_id,
+                    broadcast_message,
+                    parse_mode="Markdown"
+                )
+                sent_count += 1
+                
+            except Exception as e:
+                logger.error(f"Failed to send to {target.telegram_id}: {e}")
+                failed_count += 1
+        
+        result_text = format_broadcast_result(
+            sent=sent_count,
+            failed=failed_count,
+            total=len(targets)
+        )
+        await message.answer(f"🔄 Начинаю рассылку для хакатона: {hackathon.name}")
+
+        result = await use_cases.send_broadcast.execute(
+            hackathon_id=hackathon.id, message=broadcast_message
+        )
+
+        result_text = format_broadcast_result(
+            sent=result.sent_count,
+            failed=result.failed_count,
+            total=result.sent_count + result.failed_count,
+        )
+
+        await message.answer(result_text, parse_mode="Markdown")
+
+    except Exception as e:
+        logger.error(f"Error in /admin_broadcast: {e}")
+        await message.answer("❌ Ошибка при отправке рассылки.")
+
 
 
 @admin_router.callback_query(

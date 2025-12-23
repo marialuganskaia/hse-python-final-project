@@ -317,8 +317,7 @@ classDiagram
         +int id
         +int telegram_id
         +str username
-        +str role  // participant, organizer
-        +datetime created_at
+        +str role  // (ENUM: PARTICIPANT, ORGANIZER)
         +int current_hackathon_id
     }
 
@@ -329,14 +328,16 @@ classDiagram
         +str description
         +datetime start_at
         +datetime end_at
+        +bool is_active
     }
 
     class Event {
         +int id
         +int hackathon_id
         +str title
-        +str type  // checkpoint, deadline, meetup, etc.
+        +str type  // ENUM('CHECKPOINT', 'DEADLINE', 'MEETUP', 'LECTURE', 'OTHER')
         +datetime starts_at
+        +datetime ends_at
         +str location
         +str description
     }
@@ -378,7 +379,6 @@ erDiagram
         varchar username
         varchar role
         int current_hackathon_id
-        timestamp created_at
     }
 
     HACKATHON {
@@ -388,6 +388,7 @@ erDiagram
         text description
         timestamp start_at
         timestamp end_at
+        bool is_active
     }
 
     EVENT {
@@ -398,6 +399,7 @@ erDiagram
         timestamp starts_at
         varchar location
         text description
+        timestamp ends_at
     }
 
     FAQ_ITEM {
@@ -418,6 +420,7 @@ erDiagram
         int user_id FK
         int hackathon_id FK
         bool enabled
+        UNIQUE(user_id, hackathon_id)
     }
 
     USER ||--o{ REMINDER_SUBSCRIPTION : "subscribed"
