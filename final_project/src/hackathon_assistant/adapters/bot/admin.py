@@ -28,14 +28,13 @@ async def cmd_admin_stats(message: types.Message, use_cases: UseCaseProvider) ->
     """Обработчик команды /admin_stats"""
     try:
         parts = message.text.split(maxsplit=1)
-        
+
         hackathon_id = None
-        
+
         if len(parts) > 1:
             hack_code = parts[1].strip()
             hackathon = await use_cases.select_hackathon_by_code.execute(
-                telegram_id=message.from_user.id,
-                hackathon_code=hack_code
+                telegram_id=message.from_user.id, hackathon_code=hack_code
             )
             if hackathon:
                 hackathon_id = hackathon.id
@@ -52,18 +51,18 @@ async def cmd_admin_stats(message: types.Message, use_cases: UseCaseProvider) ->
                 await message.answer(
                     "❌ У вас нет выбранного хакатона.\n"
                     "Используйте: `/admin_stats <код_хакатона>`",
-                    parse_mode="Markdown"
+                    parse_mode="Markdown",
                 )
                 return
-        
+
         if not await is_organizer(message.from_user.id, use_cases):
             await message.answer("❌ Эта команда доступна только организаторам.")
             return
-        
+
         stats = await use_cases.get_admin_stats.execute(hackathon_id=hackathon_id)
         text = format_admin_stats(stats)
         await message.answer(text)
-        
+
     except Exception as e:
         print(f"Error in /admin_stats: {e}")
         await message.answer("❌ Ошибка при получении статистики.")
@@ -74,46 +73,44 @@ async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider
     """Обработчик команды /admin_broadcast"""
     try:
         parts = message.text.split(maxsplit=2)
-        
+
         if len(parts) < 3:
             await message.answer(
                 "❌ Использование: `/admin_broadcast <код_хакатона> <текст_сообщения>`\n\n"
                 "Пример: `/admin_broadcast HACK2024 Важное объявление!`",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
             return
-        
+
         hack_code = parts[1].strip()
         broadcast_message = parts[2].strip()
-        
+
         hackathon = await use_cases.select_hackathon_by_code.execute(
-            telegram_id=message.from_user.id,
-            hackathon_code=hack_code
+            telegram_id=message.from_user.id, hackathon_code=hack_code
         )
-        
+
         if not hackathon:
             await message.answer(f"❌ Хакатон с кодом '{hack_code}' не найден.")
             return
-        
+
         if not await is_organizer(message.from_user.id, use_cases):
             await message.answer("❌ Эта команда доступна только организаторам.")
             return
-        
+
         await message.answer(f"🔄 Начинаю рассылку для хакатона: {hackathon.name}")
-        
+
         result = await use_cases.send_broadcast.execute(
-            hackathon_id=hackathon.id,
-            message=broadcast_message
+            hackathon_id=hackathon.id, message=broadcast_message
         )
-        
+
         result_text = format_broadcast_result(
             sent=result.sent_count,
             failed=result.failed_count,
-            total=result.sent_count + result.failed_count
+            total=result.sent_count + result.failed_count,
         )
-        
+
         await message.answer(result_text, parse_mode="Markdown")
-        
+
     except Exception as e:
         print(f"Error in /admin_broadcast: {e}")
         await message.answer("❌ Ошибка при отправке рассылки.")
