@@ -1,4 +1,4 @@
-from final_project.src.hackathon_assistant.domain.models import EventType, UserRole
+from hackathon_assistant.domain.models import EventType, UserRole
 
 
 class TestUserRole:
