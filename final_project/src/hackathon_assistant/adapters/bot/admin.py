@@ -131,7 +131,7 @@ async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider
             sent=sent_count,
             failed=failed_count,
             total=len(targets)
-
+        )
         await message.answer(f"🔄 Начинаю рассылку для хакатона: {hackathon.name}")
 
         result = await use_cases.send_broadcast.execute(
