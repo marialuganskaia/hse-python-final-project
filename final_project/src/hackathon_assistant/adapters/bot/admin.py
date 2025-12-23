@@ -115,6 +115,15 @@ async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider
             sent=sent_count,
             failed=failed_count,
             total=len(targets)
+<<<<<<< Updated upstream
+=======
+        )
+
+        await message.answer(f"🔄 Начинаю рассылку для хакатона: {hackathon.name}")
+
+        result = await use_cases.send_broadcast.execute(
+            hackathon_id=hackathon.id, message=broadcast_message
+>>>>>>> Stashed changes
         )
         
         await message.answer(result_text, parse_mode="Markdown")
