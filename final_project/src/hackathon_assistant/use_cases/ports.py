@@ -214,20 +214,20 @@ class NotificationToggleResponse:
     current_status: bool
 
 
-@dataclass
-class AdminStatsRequest:
-    """Запрос для команды /admin_stats"""
-
-    admin_user_id: int
-
-
-@dataclass
-class AdminStatsResponse:
-    """Ответ для команды /admin_stats"""
-
-    total_users: int
-    users_in_current_hackathon: int
-    subscribed_users: int
+# @dataclass
+# class AdminStatsRequest:
+#     """Запрос для команды /admin_stats"""
+#
+#     admin_user_id: int
+#
+#
+# @dataclass
+# class AdminStatsResponse:
+#     """Ответ для команды /admin_stats"""
+#
+#     total_users: int
+#     users_in_current_hackathon: int
+#     subscribed_users: int
 
 
 @dataclass
