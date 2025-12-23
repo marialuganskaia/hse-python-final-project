@@ -1,3 +1,5 @@
+import logging 
+
 from datetime import datetime, timedelta
 
 from aiogram import Router, types
@@ -14,6 +16,7 @@ from .formatters import (
     format_rules,
     format_schedule,
 )
+logger = logging.getLogger(__name__)
 
 user_router = Router(name="user_router")
 
@@ -294,7 +297,6 @@ async def cmd_select_hackathon(message: types.Message, use_cases: UseCaseProvide
             "Попробуйте позже или обратитесь к организаторам."
         )
 
-
 @user_router.message(Command("join"))
 async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider) -> None:
     """Присоединение к хакатону по коду"""
@@ -305,17 +307,17 @@ async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider)
                 "❌ *Использование:* `/join <код_хакатона>`\n\n"
                 "*Пример:* `/join HACK2024`\n"
                 "Используйте /select_hackathon чтобы увидеть список доступных хакатонов.",
-                parse_mode="Markdown",
+                parse_mode="Markdown"
             )
             return
-
+        
         code = parts[1].strip().upper()
-
-        # ВАЖНО: Исправляем имя use case согласно usecase_provider.py
+        
         hackathon = await use_cases.select_hackathon_by_code.execute(
-            telegram_id=message.from_user.id, hackathon_code=code
+            telegram_id=message.from_user.id,
+            hackathon_code=code
         )
-
+        
         if hackathon:
             await message.answer(
                 f"✅ *Успешно!*\n\n"
@@ -327,18 +329,18 @@ async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider)
                 f"• Смотреть FAQ (/faq)\n"
                 f"• Включить уведомления (/notify_on)\n"
                 f"• Посмотреть информацию (/hackathon)",
-                parse_mode="Markdown",
+                parse_mode="Markdown"
             )
         else:
             await message.answer(
                 f"❌ *Хакатон не найден*\n\n"
                 f"Код `{code}` не соответствует ни одному активному хакатону.\n"
                 f"Проверьте правильность кода или используйте /select_hackathon для списка.",
-                parse_mode="Markdown",
+                parse_mode="Markdown"
             )
-
+            
     except Exception as e:
-        print(f"Error in /join: {e}")
+        logger.error(f"Error in /join: {e}")
         await message.answer(
             "❌ Произошла ошибка при присоединении.\n"
             "Попробуйте позже или обратитесь к организаторам."
