@@ -1,4 +1,5 @@
-import logging 
+import logging
+
 from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -41,7 +42,7 @@ async def cmd_admin_stats(message: types.Message, use_cases: UseCaseProvider) ->
                 await message.answer(f"❌ Хакатон с кодом '{hack_code}' не найден.")
                 return
             hackathon_id = hackathon.id
-        
+
         if not await is_organizer(message.from_user.id, use_cases):
             await message.answer("❌ Эта команда доступна только организаторам.")
             return
@@ -100,37 +101,33 @@ async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider
         if not await is_organizer(message.from_user.id, use_cases):
             await message.answer("❌ Эта команда доступна только организаторам.")
             return
-        
+
         from hackathon_assistant.use_cases.send_broadcast import SendBroadcastRequest
-        request = SendBroadcastRequest(
-            hackathon_id=hackathon.id,
-            message=broadcast_message
-        )
-        
+
+        request = SendBroadcastRequest(hackathon_id=hackathon.id, message=broadcast_message)
+
         targets_response = await use_cases.send_broadcast.execute(request)
-        targets = targets_response.targets  
+        targets = targets_response.targets
         sent_count = 0
         failed_count = 0
-        
-        await message.answer(f"🔄 Рассылка для хакатона: {hackathon.name} ({len(targets)} получателей)")
-        
+
+        await message.answer(
+            f"🔄 Рассылка для хакатона: {hackathon.name} ({len(targets)} получателей)"
+        )
+
         for target in targets:
             try:
                 await message.bot.send_message(
-                    target.telegram_id,
-                    broadcast_message,
-                    parse_mode="Markdown"
+                    target.telegram_id, broadcast_message, parse_mode="Markdown"
                 )
                 sent_count += 1
-                
+
             except Exception as e:
                 logger.error(f"Failed to send to {target.telegram_id}: {e}")
                 failed_count += 1
-        
+
         result_text = format_broadcast_result(
-            sent=sent_count,
-            failed=failed_count,
-            total=len(targets)
+            sent=sent_count, failed=failed_count, total=len(targets)
         )
         await message.answer(f"🔄 Начинаю рассылку для хакатона: {hackathon.name}")
 
@@ -149,7 +146,6 @@ async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider
     except Exception as e:
         logger.error(f"Error in /admin_broadcast: {e}")
         await message.answer("❌ Ошибка при отправке рассылки.")
-
 
 
 @admin_router.callback_query(

@@ -1,5 +1,4 @@
-import logging 
-
+import logging
 from datetime import datetime, timedelta
 
 from aiogram import Router, types
@@ -16,6 +15,7 @@ from .formatters import (
     format_rules,
     format_schedule,
 )
+
 logger = logging.getLogger(__name__)
 
 user_router = Router(name="user_router")
@@ -71,7 +71,8 @@ async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
             last_name=message.from_user.last_name,
         )
 
-        welcome_text = f"👋 Привет, {message.from_user.first_name or 'друг'}!\n\nДобро пожаловать в бот хакатона. Используйте /help для списка команд."
+        welcome_text = (f"👋 Привет, {message.from_user.first_name or 'друг'}!\n\nДобро пожаловать в бот хакатона. "
+                        f"Используйте /help для списка команд.")
         await message.answer(welcome_text, parse_mode="Markdown")
 
     except Exception as e:
@@ -200,7 +201,8 @@ async def cmd_rules(message: types.Message, use_cases: UseCaseProvider) -> None:
     except Exception as e:
         print(f"Error in /rules: {e}")
         await message.answer(
-            "📋 *Правила хакатона:*\n\n1. Уважайте других участников\n2. Соблюдайте дедлайны\n3. Не используйте чужой код\n4. Веселитесь и учитесь!",
+            "📋 *Правила хакатона:*\n\n1. "
+            "Уважайте других участников\n2. Соблюдайте дедлайны\n3. Не используйте чужой код\n4. Веселитесь и учитесь!",
             parse_mode="Markdown",
         )
 
@@ -219,7 +221,10 @@ async def cmd_faq(message: types.Message, use_cases: UseCaseProvider) -> None:
     except Exception as e:
         print(f"Error in /faq: {e}")
         await message.answer(
-            "❓ *Часто задаваемые вопросы:*\n\n*1. Какой размер команды?*\nОт 2 до 5 человек.\n\n*2. Можно ли участвовать онлайн?*\nДа, есть онлайн-трек.\n\n*3. Где взять код хакатона?*\nУ организаторов или в группе.",
+            "❓ *Часто задаваемые вопросы:*\n\n*1. "
+            "Какой размер команды?*\nОт 2 до 5 человек.\n\n*2. "
+            "Можно ли участвовать онлайн?*\nДа, есть онлайн-трек.\n\n*3. "
+            "Где взять код хакатона?*\nУ организаторов или в группе.",
             parse_mode="Markdown",
         )
 
@@ -297,6 +302,7 @@ async def cmd_select_hackathon(message: types.Message, use_cases: UseCaseProvide
             "Попробуйте позже или обратитесь к организаторам."
         )
 
+
 @user_router.message(Command("join"))
 async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider) -> None:
     """Присоединение к хакатону по коду"""
@@ -307,17 +313,16 @@ async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider)
                 "❌ *Использование:* `/join <код_хакатона>`\n\n"
                 "*Пример:* `/join HACK2024`\n"
                 "Используйте /select_hackathon чтобы увидеть список доступных хакатонов.",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
             return
-        
+
         code = parts[1].strip().upper()
-        
+
         hackathon = await use_cases.select_hackathon_by_code.execute(
-            telegram_id=message.from_user.id,
-            hackathon_code=code
+            telegram_id=message.from_user.id, hackathon_code=code
         )
-        
+
         if hackathon:
             await message.answer(
                 f"✅ *Успешно!*\n\n"
@@ -329,16 +334,16 @@ async def cmd_join_hackathon(message: types.Message, use_cases: UseCaseProvider)
                 f"• Смотреть FAQ (/faq)\n"
                 f"• Включить уведомления (/notify_on)\n"
                 f"• Посмотреть информацию (/hackathon)",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
         else:
             await message.answer(
                 f"❌ *Хакатон не найден*\n\n"
                 f"Код `{code}` не соответствует ни одному активному хакатону.\n"
                 f"Проверьте правильность кода или используйте /select_hackathon для списка.",
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
-            
+
     except Exception as e:
         logger.error(f"Error in /join: {e}")
         await message.answer(
