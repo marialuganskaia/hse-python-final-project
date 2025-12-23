@@ -15,11 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    """
-    Entrypoint (skeleton).
-    Сейчас: settings + db_ping + wiring middleware + роутеры.
-    Позже: scheduler + полноценные handlers + репозитории Dev2.
-    """
     settings = get_settings()
     logger.info("Starting app. DATABASE_URL=%s", settings.database_url)
 
@@ -31,7 +26,6 @@ async def main() -> None:
     bot = Bot(token=settings.bot_token)
     dp = Dispatcher()
 
-    # use cases per update: session -> UseCaseProvider -> handler data["use_cases"]
     dp.update.outer_middleware(
         UseCasesMiddleware(
             session_cm_factory=get_session,
@@ -42,8 +36,38 @@ async def main() -> None:
 
     setup_routers(dp)
 
-    # Пока Dev3 не сделал хендлеры, polling можно запускать, но командами бот не ответит.
-    await dp.start_polling(bot)
+    reminder_service = None
+    try:
+        from ..adapters.bot.reminders import ReminderService
+
+        REMINDERS_ENABLED = True
+    except ImportError:
+        REMINDERS_ENABLED = False
+        logger.warning("ReminderService not found, reminders disabled")
+
+    if REMINDERS_ENABLED:
+        try:
+            from ..adapters.bot.reminders import ReminderService
+
+            reminder_service = ReminderService(bot, build_use_case_provider)
+
+            if settings.reminders_enabled:
+                await reminder_service.start_periodic_reminders(
+                    interval_minutes=settings.reminder_interval_minutes
+                )
+            logger.info("Reminder service started")
+
+        except Exception as e:
+            logger.error(f"Failed to start reminder service: {e}")
+            reminder_service = None
+
+    logger.info("Starting bot polling...")
+    try:
+        await dp.start_polling(bot)
+    finally:
+        if reminder_service:
+            await reminder_service.stop_periodic_reminders()
+            logger.info("Reminder service stopped")
 
 
 if __name__ == "__main__":

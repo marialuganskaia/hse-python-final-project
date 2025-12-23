@@ -10,19 +10,13 @@ from hackathon_assistant.use_cases.dto import (
 
 
 def format_schedule(items: list[ScheduleItemDTO]) -> str:
-    """
-    Форматирование расписания в текст для Telegram
-
-    Args:
-        items: список элементов расписания
-
-    Returns:
-        Отформатированная строка с расписанием
-    """
     if not items:
-        return "📅 Расписание пока пустое.\n"
+        return (
+            "📅 *Расписание*\n\n"
+            "Расписание пока не добавлено организаторами.\n"
+            "Следите за обновлениями!"
+        )
 
-    # Группируем по дням
     items_by_day = {}
     for item in items:
         day_key = item.starts_at.strftime("%d.%m.%Y")
@@ -30,17 +24,14 @@ def format_schedule(items: list[ScheduleItemDTO]) -> str:
             items_by_day[day_key] = []
         items_by_day[day_key].append(item)
 
-    # Форматируем
     result = "📅 *Расписание:*\n\n"
 
     for day, day_items in sorted(items_by_day.items()):
         result += f"*📆 {day}:*\n"
 
-        # Сортируем события по времени начала
         day_items.sort(key=lambda x: x.starts_at)
 
         for item in day_items:
-            # Форматируем время
             time_str = f"{item.starts_at.strftime('%H:%M')}–{item.ends_at.strftime('%H:%M')}"
 
             result += f"  • *{item.title}* ({time_str})\n"
@@ -48,7 +39,6 @@ def format_schedule(items: list[ScheduleItemDTO]) -> str:
             if item.location:
                 result += f"    📍 {item.location}\n"
             if item.description:
-                # Обрезаем длинное описание
                 desc = (
                     item.description[:100] + "..."
                     if len(item.description) > 100
@@ -62,17 +52,12 @@ def format_schedule(items: list[ScheduleItemDTO]) -> str:
 
 
 def format_faq(items: list[FAQItemDTO]) -> str:
-    """
-    Форматирование FAQ в текст для Telegram
-
-    Args:
-        items: список вопросов-ответов
-
-    Returns:
-        Отформатированная строка с FAQ
-    """
     if not items:
-        return "❓ Часто задаваемые вопросы пока не добавлены.\n"
+        return (
+            "❓ *Часто задаваемые вопросы*\n\n"
+            "FAQ пока не добавлен организаторами.\n"
+            "Если у вас есть вопросы, обратитесь к организаторам напрямую."
+        )
 
     result = "❓ *Часто задаваемые вопросы:*\n\n"
 
@@ -84,17 +69,16 @@ def format_faq(items: list[FAQItemDTO]) -> str:
 
 
 def format_rules(rules: RulesDTO | None) -> str:
-    """
-    Форматирование правил в текст для Telegram
-
-    Args:
-        rules: DTO с правилами или None
-
-    Returns:
-        Отформатированные правила или сообщение об их отсутствии
-    """
     if not rules or not rules.content:
-        return "📋 Правила для этого хакатона пока не установлены.\n"
+        return (
+            "📋 *Правила хакатона*\n\n"
+            "Правила пока не добавлены организаторами.\n"
+            "Основные правила:\n"
+            "• Уважайте других участников\n"
+            "• Соблюдайте сроки\n"
+            "• Не используйте чужой код\n"
+            "• Получайте удовольствие!"
+        )
 
     return f"📋 *Правила хакатона:*\n\n{rules.content}"
 
@@ -214,33 +198,88 @@ def format_welcome_message(username: str | None = None) -> str:
 
 
 def format_help_message(commands: list[dict]) -> str:
-    """
-    Форматирование справки по командам
-
-    Args:
-        commands: список команд с описанием
-
-    Returns:
-        Отформатированная справка
-    """
-    if not commands:
-        # Заглушка, если команды еще не передаются
-        commands = [
-            {"command": "/start", "description": "Начало работы"},
-            {"command": "/help", "description": "Помощь по командам"},
-            {"command": "/hackathon", "description": "Информация о хакатоне"},
-            {"command": "/schedule", "description": "Расписание событий"},
-            {"command": "/rules", "description": "Правила хакатона"},
-            {"command": "/faq", "description": "Часто задаваемые вопросы"},
-            {"command": "/notify_on", "description": "Включить уведомления"},
-            {"command": "/notify_off", "description": "Выключить уведомления"},
-        ]
+    # Обновленный список команд
+    commands = [
+        {"command": "/start", "description": "Начать работу с ботом"},
+        {"command": "/help", "description": "Показать это сообщение"},
+        {"command": "/select_hackathon", "description": "Посмотреть доступные хакатоны"},
+        {
+            "command": "/join КОД",
+            "description": "Присоединиться к хакатону (например: /join HACK2024)",
+        },
+        {"command": "/hackathon", "description": "Информация о текущем хакатоне"},
+        {"command": "/schedule", "description": "Расписание событий"},
+        {"command": "/rules", "description": "Правила хакатона"},
+        {"command": "/faq", "description": "Часто задаваемые вопросы"},
+        {"command": "/notify_on", "description": "Включить уведомления"},
+        {"command": "/notify_off", "description": "Выключить уведомления"},
+        {"command": "/upcoming", "description": "Ближайшие события"},
+        {"command": "/list_hackathons", "description": "Показать все хакатоны"},
+        {"command": "/admin_stats", "description": "📊 Статистика (только для организаторов)"},
+        {"command": "/admin_broadcast", "description": "📨 Рассылка (только для организаторов)"},
+    ]
 
     result = "ℹ️ *Доступные команды:*\n\n"
 
     for cmd in commands:
         result += f"*{cmd['command']}* — {cmd['description']}\n"
 
-    result += "\nДля использования просто введите команду или выберите из меню."
+    result += "\n📌 *Как начать:*\n"
+    result += "1. Используйте /select_hackathon чтобы увидеть хакатоны\n"
+    result += "2. Присоединитесь с помощью /join КОД_ХАКАТОНА\n"
+    result += "3. Смотрите расписание, правила и FAQ\n\n"
+    result += "Для использования просто введите команду."
 
     return result
+
+
+def format_broadcast_preview(hackathon_name: str, user_count: int, message: str) -> str:
+    """
+    Форматирование предпросмотра рассылки
+
+    Args:
+        hackathon_name: название хакатона
+        user_count: количество получателей
+        message: текст сообщения для рассылки
+
+    Returns:
+        Отформатированный предпросмотр
+    """
+    preview = "📨 *Предпросмотр рассылки:*\n\n"
+    preview += f"*Хакатон:* {hackathon_name}\n"
+    preview += f"*Получателей:* {user_count}\n\n"
+    preview += f"*Сообщение:*\n{message}\n\n"
+    preview += "Подтвердите отправку:"
+
+    return preview
+
+
+def format_reminder_message(event, minutes_before: int) -> str:
+    """
+    Форматирование сообщения-напоминания
+    Шаблон: "через X минут событие ..."
+    """
+    from datetime import datetime
+
+    if hasattr(event, "starts_at"):
+        if isinstance(event.starts_at, datetime):
+            time_str = event.starts_at.strftime("%H:%M")
+        else:
+            time_str = str(event.starts_at)
+    else:
+        time_str = "не указано"
+
+    message = (
+        f"🔔 *Напоминание*\n\n"
+        f"Через *{minutes_before} минут* начнется:\n"
+        f"📌 *{getattr(event, 'title', 'Событие')}*\n"
+        f"🕐 {time_str}"
+    )
+    if hasattr(event, "location") and event.location:
+        message += f"\n📍 {event.location}"
+
+    if hasattr(event, "description") and event.description:
+        desc = event.description[:50] + "..." if len(event.description) > 50 else event.description
+        message += f"\n📝 {desc}"
+
+    return message

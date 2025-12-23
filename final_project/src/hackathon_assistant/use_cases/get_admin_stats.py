@@ -11,22 +11,17 @@ class GetAdminStatsUseCase:
     subscription_repo: SubscriptionRepository
     hackathon_repo: HackathonRepository
 
-    async def execute(self, hackathon_id: int) -> AdminStatsDTO | None:
-        """Получить статистику для администратора
-        Возвращает AdminStatsDTO: статистика по пользователям, подпискам
-        """
-        hackathon = await self.hackathon_repo.get_by_id(hackathon_id)
-        if hackathon is None:
-            return None
-        total_users = await self.user_repo.count_by_hackathon(hackathon_id)
-        users = await self.user_repo.get_by_hackathon(hackathon_id)
+    async def execute(self) -> AdminStatsDTO:
+        """Получить общую статистику (по всем хакатонам)"""
+        total_users = await self.user_repo.count_all()
+        users = await self.user_repo.get_all()
         participants = sum(1 for u in users if u.role == UserRole.PARTICIPANT)
         organizers = sum(1 for u in users if u.role == UserRole.ORGANIZER)
-        subscribed_users = await self.subscription_repo.count_subscribed_users(hackathon_id)
+        subscribed_users = await self.subscription_repo.count_all_subscribed()
 
         return AdminStatsDTO(
             total_users=total_users,
             participants=participants,
             organizers=organizers,
-            subscribed_users=subscribed_users
+            subscribed_users=subscribed_users,
         )

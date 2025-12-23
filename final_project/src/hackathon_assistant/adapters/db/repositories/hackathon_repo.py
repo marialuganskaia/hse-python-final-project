@@ -7,7 +7,7 @@ from ....domain.models import Hackathon
 from ....use_cases.ports import HackathonRepository
 from ..models import HackathonORM
 from ..repositories_base import SQLAlchemyRepository
-from .mappers import to_dataclass
+from .mappers import to_dataclass, to_utc_naive
 
 
 class HackathonRepo(SQLAlchemyRepository, HackathonRepository):
@@ -20,7 +20,6 @@ class HackathonRepo(SQLAlchemyRepository, HackathonRepository):
         return None if orm_obj is None else to_dataclass(Hackathon, orm_obj.__dict__)
 
     async def get_all_active(self) -> list[Hackathon]:
-        # если у вас поле называется is_active — ок; иначе подправь
         stmt = select(HackathonORM).where(HackathonORM.is_active == True)  # noqa: E712
         items = (await self.session.execute(stmt)).scalars().all()
         return [to_dataclass(Hackathon, o.__dict__) for o in items]
@@ -31,20 +30,18 @@ class HackathonRepo(SQLAlchemyRepository, HackathonRepository):
         return None if orm_obj is None else to_dataclass(Hackathon, orm_obj.__dict__)
 
     async def save(self, hackathon: Hackathon) -> Hackathon:
+        data = {k: v for k, v in hackathon.__dict__.items() if hasattr(HackathonORM, k)}
+        data["start_at"] = to_utc_naive(data.get("start_at"))
+        data["end_at"] = to_utc_naive(data.get("end_at"))
+
         if getattr(hackathon, "id", None) is None:
-            orm_obj = HackathonORM(
-                **{k: v for k, v in hackathon.__dict__.items() if hasattr(HackathonORM, k)}
-            )
+            orm_obj = HackathonORM(**data)
             self.session.add(orm_obj)
             await self.session.commit()
             await self.session.refresh(orm_obj)
             return to_dataclass(Hackathon, orm_obj.__dict__)
 
-        stmt = (
-            update(HackathonORM)
-            .where(HackathonORM.id == hackathon.id)
-            .values(**{k: v for k, v in hackathon.__dict__.items() if hasattr(HackathonORM, k)})
-        )
+        stmt = update(HackathonORM).where(HackathonORM.id == hackathon.id).values(**data)
         await self.session.execute(stmt)
         await self.session.commit()
         return hackathon
