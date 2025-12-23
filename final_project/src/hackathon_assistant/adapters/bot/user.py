@@ -71,8 +71,10 @@ async def cmd_start(message: types.Message, use_cases: UseCaseProvider) -> None:
             last_name=message.from_user.last_name,
         )
 
-        welcome_text = (f"👋 Привет, {message.from_user.first_name or 'друг'}!\n\nДобро пожаловать в бот хакатона. "
-                        f"Используйте /help для списка команд.")
+        welcome_text = (
+            f"👋 Привет, {message.from_user.first_name or 'друг'}!\n\nДобро пожаловать в бот хакатона. "
+            f"Используйте /help для списка команд."
+        )
         await message.answer(welcome_text, parse_mode="Markdown")
 
     except Exception as e:
