@@ -1,6 +1,9 @@
 import asyncio
-from unittest.mock import patch, Mock, AsyncMock
-from hackathon_assistant.infra.db import db_ping, get_engine, dispose_engine
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
+
+from hackathon_assistant.infra.db import db_ping, dispose_engine, get_engine
 
 
 @pytest.mark.asyncio

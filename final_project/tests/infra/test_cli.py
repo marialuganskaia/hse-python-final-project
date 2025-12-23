@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, call, patch
 import pytest
 
 from hackathon_assistant.domain.models import EventType, Hackathon
-from hackathon_assistant.infra.cli import _parse_dt, _normalize_config, CLI
+from hackathon_assistant.infra.cli import CLI, _normalize_config, _parse_dt
 
 
 def test_cli_parser():

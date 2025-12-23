@@ -1,18 +1,20 @@
-import pytest
-from unittest.mock import AsyncMock, MagicMock
-from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from hackathon_assistant.domain.models import (
-    User,
-    UserRole,
-    Hackathon,
     Event,
     EventType,
     FAQItem,
+    Hackathon,
+    ReminderSubscription,
     Rules,
-    ReminderSubscription
+    User,
+    UserRole,
 )
+
 
 @pytest.fixture
 def sample_user():
@@ -24,7 +26,7 @@ def sample_user():
         first_name="Test",
         last_name="User",
         role=UserRole.PARTICIPANT,
-        current_hackathon_id=1
+        current_hackathon_id=1,
     )
 
 
@@ -38,7 +40,7 @@ def sample_organizer():
         first_name="Organizer",
         last_name="Admin",
         role=UserRole.ORGANIZER,
-        current_hackathon_id=1
+        current_hackathon_id=1,
     )
 
 
@@ -53,7 +55,7 @@ def sample_hackathon():
         description="Тестовый хакатон",
         start_at=now,
         end_at=now + timedelta(days=2),
-        is_active=True
+        is_active=True,
     )
 
 
@@ -69,7 +71,7 @@ def sample_event():
         starts_at=now + timedelta(hours=1),
         ends_at=now + timedelta(hours=2),
         location="Главный зал",
-        description="Регистрация участников"
+        description="Регистрация участников",
     )
 
 
@@ -77,32 +79,20 @@ def sample_event():
 def sample_faq_item():
     """Фикстура FAQ"""
     return FAQItem(
-        id=1,
-        hackathon_id=1,
-        question="Какой размер команды?",
-        answer="От 2 до 5 человек"
+        id=1, hackathon_id=1, question="Какой размер команды?", answer="От 2 до 5 человек"
     )
 
 
 @pytest.fixture
 def sample_rules():
     """Фикстура правил"""
-    return Rules(
-        id=1,
-        hackathon_id=1,
-        content="1. Уважайте друг друга\n2. Соблюдайте сроки"
-    )
+    return Rules(id=1, hackathon_id=1, content="1. Уважайте друг друга\n2. Соблюдайте сроки")
 
 
 @pytest.fixture
 def sample_subscription():
     """Фикстура подписки на уведомления"""
-    return ReminderSubscription(
-        id=1,
-        user_id=1,
-        hackathon_id=1,
-        enabled=True
-    )
+    return ReminderSubscription(id=1, user_id=1, hackathon_id=1, enabled=True)
 
 
 @pytest.fixture

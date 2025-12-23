@@ -1,12 +1,17 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 from aiogram import Dispatcher
 
-from hackathon_assistant.adapters.bot.routers import setup_routers
-from hackathon_assistant.adapters.bot.user import user_router, cmd_start,\
-    cmd_help, cmd_schedule, cmd_join_hackathon
 from hackathon_assistant.adapters.bot.admin import admin_router, cmd_admin_stats
+from hackathon_assistant.adapters.bot.routers import setup_routers
+from hackathon_assistant.adapters.bot.user import (
+    cmd_help,
+    cmd_join_hackathon,
+    cmd_schedule,
+    cmd_start,
+    user_router,
+)
 
 
 class TestBotRouters:
@@ -56,7 +61,9 @@ class TestBotRouters:
 
         mock_message.text = "/schedule"
 
-        with patch('final_project.src.hackathon_assistant.adapters.bot.user.require_hackathon_selected') as mock_check:
+        with patch(
+            "hackathon_assistant.adapters.bot.user.require_hackathon_selected"
+        ) as mock_check:
             mock_check.return_value = True
             mock_use_cases.get_schedule.execute.return_value = []
 
@@ -77,8 +84,7 @@ class TestBotRouters:
         await cmd_join_hackathon(mock_message, mock_use_cases)
 
         mock_use_cases.select_hackathon_by_code.execute.assert_called_once_with(
-            telegram_id=mock_message.from_user.id,
-            hackathon_code="HACK2025"
+            telegram_id=mock_message.from_user.id, hackathon_code="HACK2025"
         )
         mock_message.answer.assert_called_once()
         assert "✅ *Успешно!*" in mock_message.answer.call_args[0][0]
@@ -102,7 +108,7 @@ class TestBotRouters:
 
         mock_message.text = "/admin_stats"
 
-        with patch('final_project.src.hackathon_assistant.adapters.bot.admin.is_organizer') as mock_is_organizer:
+        with patch("hackathon_assistant.adapters.bot.admin.is_organizer") as mock_is_organizer:
             mock_is_organizer.return_value = True
             mock_stats = MagicMock()
             mock_stats.total_users = 100
@@ -119,10 +125,13 @@ class TestBotRouters:
 
         mock_message.text = "/admin_stats"
 
-        with patch('final_project.src.hackathon_assistant.adapters.bot.admin.is_organizer') as mock_is_organizer:
+        with patch("hackathon_assistant.adapters.bot.admin.is_organizer") as mock_is_organizer:
             mock_is_organizer.return_value = False
 
             await cmd_admin_stats(mock_message, mock_use_cases)
 
             mock_message.answer.assert_called_once()
-            assert "❌ Эта команда доступна только организаторам" in mock_message.answer.call_args[0][0]
+            assert (
+                "❌ Эта команда доступна только организаторам"
+                in mock_message.answer.call_args[0][0]
+            )

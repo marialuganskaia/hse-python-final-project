@@ -1,4 +1,4 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -17,7 +17,7 @@ class TestBotHelpers:
 
         telegram_id = 123456789
 
-        with patch('final_project.src.hackathon_assistant.adapters.bot.helpers.get_settings') as mock_settings:
+        with patch("hackathon_assistant.adapters.bot.helpers.get_settings") as mock_settings:
             settings = MagicMock()
             settings.allowed_admin_ids = [telegram_id, 987654321]
             mock_settings.return_value = settings
@@ -34,7 +34,7 @@ class TestBotHelpers:
         mock_user.role = UserRole.ORGANIZER
         mock_use_cases.start_user.user_repo.get_by_telegram_id.return_value = mock_user
 
-        with patch('final_project.src.hackathon_assistant.adapters.bot.helpers.get_settings') as mock_settings:
+        with patch("hackathon_assistant.adapters.bot.helpers.get_settings") as mock_settings:
             settings = MagicMock()
             settings.allowed_admin_ids = []
             mock_settings.return_value = settings
@@ -42,7 +42,9 @@ class TestBotHelpers:
             result = await is_organizer(telegram_id, mock_use_cases)
 
             assert result is True
-            mock_use_cases.start_user.user_repo.get_by_telegram_id.assert_called_once_with(telegram_id)
+            mock_use_cases.start_user.user_repo.get_by_telegram_id.assert_called_once_with(
+                telegram_id
+            )
 
     @pytest.mark.asyncio
     async def test_is_not_organizer(self, mock_use_cases):
@@ -52,7 +54,7 @@ class TestBotHelpers:
         mock_user.role = UserRole.PARTICIPANT
         mock_use_cases.start_user.user_repo.get_by_telegram_id.return_value = mock_user
 
-        with patch('final_project.src.hackathon_assistant.adapters.bot.helpers.get_settings') as mock_settings:
+        with patch("hackathon_assistant.adapters.bot.helpers.get_settings") as mock_settings:
             settings = MagicMock()
             settings.allowed_admin_ids = []
             mock_settings.return_value = settings
@@ -67,7 +69,7 @@ class TestBotHelpers:
         telegram_id = 999999999
         mock_use_cases.start_user.user_repo.get_by_telegram_id.return_value = None
 
-        with patch('final_project.src.hackathon_assistant.adapters.bot.helpers.get_settings') as mock_settings:
+        with patch("hackathon_assistant.adapters.bot.helpers.get_settings") as mock_settings:
             settings = MagicMock()
             settings.allowed_admin_ids = []
             mock_settings.return_value = settings

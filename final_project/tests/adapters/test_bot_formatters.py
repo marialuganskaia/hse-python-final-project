@@ -1,24 +1,24 @@
 from datetime import datetime, timedelta
 
+from hackathon_assistant.adapters.bot.formatters import (
+    format_admin_stats,
+    format_broadcast_preview,
+    format_broadcast_result,
+    format_faq,
+    format_hackathon_info,
+    format_help_message,
+    format_notification_status,
+    format_reminder_message,
+    format_rules,
+    format_schedule,
+    format_welcome_message,
+)
 from hackathon_assistant.use_cases.dto import (
-    ScheduleItemDTO,
+    AdminStatsDTO,
     FAQItemDTO,
     HackathonDTO,
     RulesDTO,
-    AdminStatsDTO,
-)
-from hackathon_assistant.adapters.bot.formatters import (
-    format_schedule,
-    format_faq,
-    format_rules,
-    format_hackathon_info,
-    format_admin_stats,
-    format_broadcast_result,
-    format_notification_status,
-    format_welcome_message,
-    format_help_message,
-    format_broadcast_preview,
-    format_reminder_message
+    ScheduleItemDTO,
 )
 
 
@@ -34,15 +34,15 @@ class TestFormatters:
                 starts_at=now,
                 ends_at=now + timedelta(hours=1),
                 location="Холл",
-                description="Регистрация участников"
+                description="Регистрация участников",
             ),
             ScheduleItemDTO(
                 title="Открытие",
                 starts_at=now + timedelta(hours=2),
                 ends_at=now + timedelta(hours=3),
                 location="Аудитория 101",
-                description="Торжественное открытие"
-            )
+                description="Торжественное открытие",
+            ),
         ]
 
         result = format_schedule(items)
@@ -62,14 +62,8 @@ class TestFormatters:
     def test_format_faq_with_items(self):
         """Тест форматирования FAQ"""
         items = [
-            FAQItemDTO(
-                question="Какой размер команды?",
-                answer="От 2 до 5 человек"
-            ),
-            FAQItemDTO(
-                question="Можно ли участвовать онлайн?",
-                answer="Да, есть онлайн-трек"
-            )
+            FAQItemDTO(question="Какой размер команды?", answer="От 2 до 5 человек"),
+            FAQItemDTO(question="Можно ли участвовать онлайн?", answer="Да, есть онлайн-трек"),
         ]
 
         result = format_faq(items)
@@ -87,9 +81,7 @@ class TestFormatters:
 
     def test_format_rules_with_content(self):
         """Тест форматирования правил"""
-        rules = RulesDTO(
-            content="1. Уважайте других\n2. Соблюдайте сроки\n3. Веселитесь!"
-        )
+        rules = RulesDTO(content="1. Уважайте других\n2. Соблюдайте сроки\n3. Веселитесь!")
 
         result = format_rules(rules)
 
@@ -115,7 +107,7 @@ class TestFormatters:
             start_at=now,
             end_at=now + timedelta(days=2),
             is_active=True,
-            location="Москва"
+            location="Москва",
         )
 
         result_subscribed = format_hackathon_info(hackathon, True)
@@ -130,12 +122,7 @@ class TestFormatters:
 
     def test_format_admin_stats(self):
         """Тест форматирования статистики администратора"""
-        stats = AdminStatsDTO(
-            total_users=100,
-            participants=85,
-            organizers=15,
-            subscribed_users=60
-        )
+        stats = AdminStatsDTO(total_users=100, participants=85, organizers=15, subscribed_users=60)
 
         result = format_admin_stats(stats)
 
