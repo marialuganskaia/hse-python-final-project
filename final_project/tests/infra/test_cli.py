@@ -7,8 +7,8 @@ from pathlib import Path
 from unittest.mock import patch, AsyncMock, MagicMock, call
 
 
-from final_project.src.hackathon_assistant.domain.models import EventType, Hackathon
-from final_project.src.hackathon_assistant.infra.cli import _parse_dt, _normalize_config, CLI
+from hackathon_assistant.domain.models import EventType, Hackathon
+from hackathon_assistant.infra.cli import _parse_dt, _normalize_config, CLI
 
 
 def test_cli_parser():

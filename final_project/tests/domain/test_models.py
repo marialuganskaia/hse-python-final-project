@@ -3,7 +3,7 @@ from datetime import timedelta
 
 import pytest
 
-from final_project.src.hackathon_assistant.domain.models import (
+from hackathon_assistant.domain.models import (
     Event,
     EventType,
     FAQItem,

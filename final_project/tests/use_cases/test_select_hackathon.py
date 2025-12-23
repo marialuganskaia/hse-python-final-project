@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from final_project.src.hackathon_assistant.use_cases.select_hackathon import SelectHackathonByCodeUseCase
+from hackathon_assistant.use_cases.select_hackathon import SelectHackathonByCodeUseCase
 
 
 class TestSelectHackathonByCodeUseCase:

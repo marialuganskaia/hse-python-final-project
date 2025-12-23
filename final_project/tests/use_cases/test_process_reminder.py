@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from final_project.src.hackathon_assistant.domain.models import Event, EventType, User, UserRole
-from final_project.src.hackathon_assistant.use_cases.dto import ReminderPileDTO
+from hackathon_assistant.domain.models import Event, EventType, User, UserRole
+from hackathon_assistant.use_cases.dto import ReminderPileDTO
 
 
 class TestProcessRemindersUseCase:
