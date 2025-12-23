@@ -24,7 +24,7 @@ class UserORM(Base):
     username = Column(String(255), nullable=True, default="")
     first_name = Column(String(255), default="")
     last_name = Column(String(255), default="")
-    role = Column(Enum(UserRole), nullable=False)
+    role = Column(Enum(UserRole), nullable=True)
     current_hackathon_id = Column(Integer, ForeignKey("hackathons.id"))
 
 
