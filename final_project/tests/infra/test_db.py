@@ -1,7 +1,8 @@
-import pytest
 import asyncio
-from unittest.mock import patch, Mock, AsyncMock
-from final_project.src.hackathon_assistant.infra.db import db_ping, get_engine, dispose_engine
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
+from final_project.src.hackathon_assistant.infra.db import db_ping, dispose_engine, get_engine
 
 
 @pytest.mark.asyncio
@@ -18,7 +19,7 @@ async def test_db_ping_success():
     # Настраиваем execute
     mock_session.execute.return_value = mock_result
 
-    with patch('final_project.src.hackathon_assistant.infra.db.get_session') as mock_get_session:
+    with patch("final_project.src.hackathon_assistant.infra.db.get_session") as mock_get_session:
         mock_get_session.return_value.__aenter__.return_value = mock_session
 
         result = await db_ping()
@@ -29,7 +30,7 @@ async def test_db_ping_success():
 async def test_db_ping_failure():
     """Тест неудачной проверки подключения к БД"""
 
-    with patch('final_project.src.hackathon_assistant.infra.db.get_session') as mock_get_session:
+    with patch("final_project.src.hackathon_assistant.infra.db.get_session") as mock_get_session:
         mock_get_session.return_value.__aenter__.side_effect = Exception("DB error")
 
         result = await db_ping()
@@ -40,7 +41,7 @@ def test_get_engine():
     """Тест получения engine"""
 
     # Мокаем настройки
-    with patch('final_project.src.hackathon_assistant.infra.db.get_settings') as mock_settings:
+    with patch("final_project.src.hackathon_assistant.infra.db.get_settings") as mock_settings:
         mock_settings.return_value.database_url = "sqlite+aiosqlite:///:memory:"
 
         # Первый вызов создает engine

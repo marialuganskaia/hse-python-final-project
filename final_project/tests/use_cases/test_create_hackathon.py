@@ -2,7 +2,13 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from final_project.src.hackathon_assistant.domain.models import Event, EventType, FAQItem, Hackathon, Rules
+from final_project.src.hackathon_assistant.domain.models import (
+    Event,
+    EventType,
+    FAQItem,
+    Hackathon,
+    Rules,
+)
 
 
 class TestCreateHackathonFromConfigUseCase:
