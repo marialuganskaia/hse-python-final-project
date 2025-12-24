@@ -152,7 +152,7 @@ async def cmd_schedule(message: types.Message, use_cases: UseCaseProvider) -> No
 
         if not schedule_items:
             await message.answer(
-                "📅 *Расписание пустое*\n\nПока что для выбранного хакатона нет событий.",
+                "📅 *Расписание:*\n\nПока что для выбранного хакатона нет событий.",
                 parse_mode="Markdown",
             )
             return
