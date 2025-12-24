@@ -7,7 +7,29 @@ from hackathon_assistant.use_cases.dto import (
     ReminderPileDTO
 )
 
+from hackathon_assistant.infra.db import get_session
+from hackathon_assistant.use_cases.process_reminder import ProcessRemindersUseCase
+from hackathon_assistant.use_cases.send_reminder import SendRemindersUseCase
+
 logger = logging.getLogger(__name__)
+
+
+class _AiogramNotifier:
+    def __init__(self, bot: Bot):
+        self._bot = bot
+
+    async def send(self, telegram_id: int, text: str) -> None:
+        try:
+            await self._bot.send_message(telegram_id, text, parse_mode="Markdown")
+        except TelegramBadRequest as e:
+            msg = str(e).lower()
+            if "chat not found" in msg or "bot was blocked" in msg:
+                logger.warning("User %s not available: %s", telegram_id, e)
+            else:
+                logger.error("Telegram error for user %s: %s", telegram_id, e)
+        except TelegramForbiddenError as e:
+            logger.warning("User %s blocked the bot: %s", telegram_id, e)
+
 
 class ReminderService:
     def __init__(self, bot: Bot, use_case_provider_factory):
@@ -22,7 +44,7 @@ class ReminderService:
             return
 
         self._task = asyncio.create_task(self._periodic_reminder_task(interval_minutes))
-        logger.info(f"Periodic reminders started (interval: {interval_minutes} min)")
+        logger.info("Periodic reminders started (interval: %s min)", interval_minutes)
 
     async def stop_periodic_reminders(self):
         if self._task and not self._task.done():
@@ -41,90 +63,35 @@ class ReminderService:
         except asyncio.CancelledError:
             logger.info("Reminder task cancelled")
         except Exception as e:
-            logger.error(f"Reminder task error: {e}")
+            logger.error("Reminder task error: %s", e)
 
     async def send_upcoming_event_reminders(self):
         logger.info("Checking for upcoming events...")
         try:
-            async with self.use_case_provider_factory() as use_cases:
+            async with get_session() as session:
+                use_cases = self.use_case_provider_factory(session)
+
                 hackathons = await use_cases.list_hackathons.execute(active_only=True)
-                
-                for hackathon in hackathons:
-                    events_2h = await use_cases.get_upcoming_events.execute(
-                        hackathon_id=hackathon.id,
-                        minutes_ahead=120
-                    )
-                    
-                    events_15min = await use_cases.get_upcoming_events.execute(
-                        hackathon_id=hackathon.id,
-                        minutes_ahead=15
-                    )
-                    
-                    if events_2h:
-                        await self._send_reminders_for_events(
-                            use_cases, hackathon.id, events_2h, 120
-                        )
-                    
-                    if events_15min:
-                        await self._send_reminders_for_events(
-                            use_cases, hackathon.id, events_15min, 15
-                        )
-                        
+                if not hackathons:
+                    logger.info("No active hackathons, skip reminders")
+                    return
+
+                process_uc = ProcessRemindersUseCase(
+                    event_repo=use_cases.get_upcoming_events.event_repo,
+                    subscription_repo=use_cases.subscribe_notifications.subscription_repo,
+                )
+                send_uc = SendRemindersUseCase(notifier=_AiogramNotifier(self.bot))
+
+                all_piles = []
+                for h in hackathons:
+                    piles = await process_uc.execute(hackathon_id=h.id, hours_ahead=1)
+                    all_piles.extend(piles)
+
+                if not all_piles:
+                    logger.info("No reminder piles, nothing to send")
+                    return
+
+                await send_uc.execute(all_piles)
+
         except Exception as e:
             logger.error(f"Error in send_upcoming_event_reminders: {e}")
-
-    async def _send_reminders_for_events(self, use_cases, hackathon_id: int, events: list, interval_minutes: int):
-        try:
-            if not events:
-                return
-            
-            participants = await self._get_hackathon_participants(use_cases, hackathon_id)
-            
-            if not participants:
-                logger.warning(f"No participants found for hackathon {hackathon_id}")
-                return
-            
-            reminder_piles = []
-            
-            for event in events:
-                reminder_event = ReminderEventDTO(
-                    event_id=event.id,
-                    title=event.title,
-                    starts_at=event.starts_at
-                )
-                
-                participant_dtos = [
-                    ReminderParticipantDTO(
-                        user_id=user.id,
-                        telegram_id=user.telegram_id
-                    )
-                    for user in participants
-                ]
-                
-                pile = ReminderPileDTO(
-                    event=reminder_event,
-                    participants=participant_dtos
-                )
-                reminder_piles.append(pile)
-            
-            if reminder_piles:
-                total_participants = sum(len(p.participants) for p in reminder_piles)
-                logger.info(f"Sending reminders for {len(reminder_piles)} events to {total_participants} users")
-                await use_cases.send_reminders.execute(reminder_piles)
-                
-        except Exception as e:
-            logger.error(f"Error sending reminders for events: {e}")
-
-    async def _get_hackathon_participants(self, use_cases, hackathon_id: int):
-        try:
-            hackathon_info = await use_cases.get_hackathon_info.execute(
-                hackathon_id=hackathon_id,
-                user_id=None
-            )
-            
-            return []
-            
-        except Exception as e:
-            logger.error(f"Error getting hackathon participants: {e}")
-            return []
-    

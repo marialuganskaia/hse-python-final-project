@@ -101,7 +101,15 @@ class TestFinishHackathonUseCase:
         """Нет подписок на хакатон"""
         hackathon_id = 5
 
-        hackathon = Hackathon(id=5, code="HACK2024", name="Test Hackathon", is_active=True)
+        now = datetime.now()
+        hackathon = Hackathon(
+            id=hackathon_id,
+            code="HACK2024",
+            name="Test Hackathon",
+            start_at=now,
+            end_at=now + timedelta(days=1),
+            is_active=True,
+        )
         mock_hackathon_repo.get_by_id.return_value = hackathon
 
         mock_subscription_repo.get_by_hackathon.return_value = []

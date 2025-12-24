@@ -2,12 +2,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from hackathon_assistant.domain.models import (
-    Hackathon,
-    ReminderSubscription,
-    User,
-    UserRole,
-)
+from hackathon_assistant.domain.models import Hackathon, ReminderSubscription, User, UserRole
 from hackathon_assistant.use_cases.dto import HackathonDTO
 
 

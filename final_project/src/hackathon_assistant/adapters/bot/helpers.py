@@ -1,10 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from hackathon_assistant.infra.usecase_provider import UseCaseProvider
-
 from hackathon_assistant.domain.models import UserRole
 from hackathon_assistant.infra.settings import get_settings
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider
@@ -29,5 +24,5 @@ async def get_current_hackathon_id(telegram_id: int, use_cases: UseCaseProvider)
     """
     Получает ID текущего хакатона пользователя
     """
-    # ВРЕМЕННАЯ ЗАГЛУШКА
-    return 1  # ID тестового хакатона
+    hackathon_dto, _ = await use_cases.get_hackathon_info.execute(telegram_id=telegram_id)
+    return None if hackathon_dto is None else hackathon_dto.id

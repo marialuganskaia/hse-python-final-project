@@ -117,6 +117,10 @@ class SubscriptionRepository(Protocol):
         """Подсчитать подписанных пользователей (/admin_stats)"""
         ...
 
+    async def count_all_subscribed(self) -> int:
+        """Подсчитать всех подписанных пользователей (enabled=true) по всем хакатонам"""
+        ...
+
     async def save(self, subscription: ReminderSubscription) -> ReminderSubscription:
         """Сохранить подписку (сохранить или обновить)"""
         ...

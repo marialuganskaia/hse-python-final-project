@@ -70,3 +70,9 @@ class SubscriptionRepo(SQLAlchemyRepository, SubscriptionRepository):
             ReminderSubscriptionORM.enabled == True,  # noqa: E712
         )
         return int((await self.session.execute(stmt)).scalar_one())
+
+    async def count_all_subscribed(self) -> int:
+        stmt = select(func.count(ReminderSubscriptionORM.id)).where(
+            ReminderSubscriptionORM.enabled == True  # noqa: E712
+        )
+        return int((await self.session.execute(stmt)).scalar_one())
