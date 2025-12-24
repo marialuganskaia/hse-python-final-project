@@ -1,8 +1,11 @@
 import asyncio
 import logging
-
 from aiogram import Bot
-from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
+from hackathon_assistant.use_cases.dto import (
+    ReminderEventDTO, 
+    ReminderParticipantDTO, 
+    ReminderPileDTO
+)
 
 from hackathon_assistant.infra.db import get_session
 from hackathon_assistant.use_cases.process_reminder import ProcessRemindersUseCase

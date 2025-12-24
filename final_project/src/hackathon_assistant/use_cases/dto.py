@@ -74,12 +74,18 @@ class BroadcastResultDTO:
 
 @dataclass
 class EventDTO:
+    """DTO для события"""
+    
     id: int
     title: str
     starts_at: datetime
     ends_at: datetime
     location: str | None = None
     description: str | None = None
+    
+    def minutes_until_start(self) -> float:
+        """Сколько минут осталось до начала события"""
+        return (self.starts_at - datetime.now()).total_seconds() / 60
 
 
 @dataclass
@@ -105,3 +111,4 @@ class ReminderPileDTO:
 
     event: ReminderEventDTO
     participants: list[ReminderParticipantDTO]
+    

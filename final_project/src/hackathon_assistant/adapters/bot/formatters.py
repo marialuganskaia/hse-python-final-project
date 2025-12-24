@@ -255,31 +255,34 @@ def format_broadcast_preview(hackathon_name: str, user_count: int, message: str)
 
 
 def format_reminder_message(event, minutes_before: int) -> str:
-    """
-    Форматирование сообщения-напоминания
-    Шаблон: "через X минут событие ..."
-    """
-    from datetime import datetime
-
-    if hasattr(event, "starts_at"):
-        if isinstance(event.starts_at, datetime):
-            time_str = event.starts_at.strftime("%H:%M")
+    """Форматирование сообщения-напоминания с учетом интервала"""
+    if minutes_before >= 60:
+        hours = minutes_before // 60
+        if hours == 1:
+            time_text = "через 1 час"
+        elif 2 <= hours <= 4:
+            time_text = f"через {hours} часа"
         else:
-            time_str = str(event.starts_at)
+            time_text = f"через {hours} часов"
     else:
-        time_str = "не указано"
-
+        last_digit = minutes_before % 10
+        if last_digit == 1 and minutes_before != 11:
+            time_text = f"через {minutes_before} минуту"
+        elif 2 <= last_digit <= 4 and not (12 <= minutes_before <= 14):
+            time_text = f"через {minutes_before} минуты"
+        else:
+            time_text = f"через {minutes_before} минут"
+    
     message = (
         f"🔔 *Напоминание*\n\n"
-        f"Через *{minutes_before} минут* начнется:\n"
-        f"📌 *{getattr(event, 'title', 'Событие')}*\n"
-        f"🕐 {time_str}"
+        f"{time_text}: *{event.title}*"
     )
-    if hasattr(event, "location") and event.location:
+    
+    if hasattr(event, 'starts_at') and event.starts_at:
+        time_str = event.starts_at.strftime("%H:%M")
+        message += f"\n🕐 {time_str}"
+    
+    if hasattr(event, 'location') and event.location:
         message += f"\n📍 {event.location}"
-
-    if hasattr(event, "description") and event.description:
-        desc = event.description[:50] + "..." if len(event.description) > 50 else event.description
-        message += f"\n📝 {desc}"
-
+    
     return message
