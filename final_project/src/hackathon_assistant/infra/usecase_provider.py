@@ -17,12 +17,14 @@ from ..use_cases.select_hackathon import SelectHackathonByCodeUseCase
 from ..use_cases.send_broadcast import SendBroadcastUseCase
 from ..use_cases.start_user import StartUserUseCase
 from .repositories import RepositoryProvider
+from ..use_cases.get_events_for_reminders import GetEventsForRemindersUseCase
 
 
 @dataclass(frozen=True)
 class UseCaseProvider:
     """Container with ready-to-use participant use cases."""
 
+    get_events_for_reminders: GetEventsForRemindersUseCase
     start_user: StartUserUseCase
     select_hackathon_by_code: SelectHackathonByCodeUseCase
     get_schedule: GetScheduleUseCase
@@ -92,5 +94,8 @@ def build_use_case_provider(session: AsyncSession) -> UseCaseProvider:
         finish_hackathon=FinishHackathonUseCase(
             hackathon_repo=repos.hackathon_repo(),
             subscription_repo=repos.subscription_repo(),
+        ),
+        get_events_for_reminders=GetEventsForRemindersUseCase(
+            event_repo=repos.event_repo()
         ),
     )

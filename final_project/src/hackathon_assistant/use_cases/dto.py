@@ -105,3 +105,17 @@ class ReminderPileDTO:
 
     event: ReminderEventDTO
     participants: list[ReminderParticipantDTO]
+
+@dataclass
+class EventDTO:
+    id: int
+    title: str
+    starts_at: datetime
+    ends_at: datetime
+    location: str | None = None
+    description: str | None = None
+    
+    def minutes_until_start(self) -> float:
+        """Сколько минут осталось до начала события"""
+        from datetime import datetime
+        return (self.starts_at - datetime.now()).total_seconds() / 60
