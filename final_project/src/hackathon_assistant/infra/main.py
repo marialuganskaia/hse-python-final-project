@@ -26,7 +26,10 @@ async def main() -> None:
     bot = Bot(token=settings.bot_token)
     dp = Dispatcher()
 
-    provider_factory = lambda session: build_use_case_provider(session=session, bot=bot)
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    def provider_factory(session: AsyncSession):
+        return build_use_case_provider(session=session, bot=bot)
 
     dp.update.outer_middleware(
         UseCasesMiddleware(
