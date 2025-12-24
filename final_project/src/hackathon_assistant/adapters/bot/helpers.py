@@ -1,10 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from hackathon_assistant.infra.usecase_provider import UseCaseProvider
-
 from hackathon_assistant.domain.models import UserRole
 from hackathon_assistant.infra.settings import get_settings
 from hackathon_assistant.infra.usecase_provider import UseCaseProvider

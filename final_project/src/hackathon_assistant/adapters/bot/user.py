@@ -151,26 +151,13 @@ async def cmd_schedule(message: types.Message, use_cases: UseCaseProvider) -> No
         schedule_items = await use_cases.get_schedule.execute(message.from_user.id)
 
         if not schedule_items:
-            # Тестовые данные если расписание пустое
-            test_items = [
-                ScheduleItemDTO(
-                    title="Регистрация участников",
-                    starts_at=datetime.now() + timedelta(hours=1),
-                    ends_at=datetime.now() + timedelta(hours=2),
-                    location="Главный холл",
-                    description="Регистрация и выдача бейджей",
-                ),
-                ScheduleItemDTO(
-                    title="Открытие хакатона",
-                    starts_at=datetime.now() + timedelta(hours=3),
-                    ends_at=datetime.now() + timedelta(hours=4),
-                    location="Аудитория 101",
-                    description="Приветственная речь организаторов",
-                ),
-            ]
-            schedule_text = format_schedule(test_items)
-        else:
-            schedule_text = format_schedule(schedule_items)
+            await message.answer(
+                "📅 *Расписание пустое*\n\nПока что для выбранного хакатона нет событий.",
+                parse_mode="Markdown",
+            )
+            return
+
+        schedule_text = format_schedule(schedule_items)
 
         await message.answer(schedule_text, parse_mode="Markdown")
     except Exception as e:
