@@ -1,10 +1,8 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
-
+from aiogram import Bot
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..use_cases.finish_hackathon import FinishHackathonUseCase
 from ..use_cases.get_admin_stats import GetAdminStatsUseCase
 from ..use_cases.get_faq import GetFAQUseCase
 from ..use_cases.get_hackathon_info import GetHackathonInfoUseCase
@@ -15,16 +13,15 @@ from ..use_cases.list_hackathons import ListHackathonsUseCase
 from ..use_cases.notifications import SubscribeNotificationsUseCase, UnsubscribeNotificationsUseCase
 from ..use_cases.select_hackathon import SelectHackathonByCodeUseCase
 from ..use_cases.send_broadcast import SendBroadcastUseCase
+from ..use_cases.send_reminder import SendRemindersUseCase
 from ..use_cases.start_user import StartUserUseCase
 from .repositories import RepositoryProvider
-from ..use_cases.get_events_for_reminders import GetEventsForRemindersUseCase
 
 
 @dataclass(frozen=True)
 class UseCaseProvider:
     """Container with ready-to-use participant use cases."""
 
-    get_events_for_reminders: GetEventsForRemindersUseCase
     start_user: StartUserUseCase
     select_hackathon_by_code: SelectHackathonByCodeUseCase
     get_schedule: GetScheduleUseCase
@@ -37,14 +34,14 @@ class UseCaseProvider:
     get_upcoming_events: GetUpcomingEventsUseCase
     get_admin_stats: GetAdminStatsUseCase
     send_broadcast: SendBroadcastUseCase
-    finish_hackathon: FinishHackathonUseCase
+    send_reminders: SendRemindersUseCase
 
     async def get_user_by_telegram_id(self, telegram_id: int):
         """Получить пользователя по Telegram ID"""
         return await self.start_user.user_repo.get_by_telegram_id(telegram_id)
 
 
-def build_use_case_provider(session: AsyncSession) -> UseCaseProvider:
+def build_use_case_provider(session: AsyncSession, bot: Bot) -> UseCaseProvider:
     repos = RepositoryProvider(session=session)
 
     return UseCaseProvider(
@@ -91,11 +88,5 @@ def build_use_case_provider(session: AsyncSession) -> UseCaseProvider:
             user_repo=repos.user_repo(),
             subscription_repo=repos.subscription_repo(),
         ),
-        finish_hackathon=FinishHackathonUseCase(
-            hackathon_repo=repos.hackathon_repo(),
-            subscription_repo=repos.subscription_repo(),
-        ),
-        get_events_for_reminders=GetEventsForRemindersUseCase(
-            event_repo=repos.event_repo()
-        ),
+        send_reminders=SendRemindersUseCase(bot=bot),
     )

@@ -1,11 +1,13 @@
 import asyncio
 import logging
-
 from aiogram import Bot
-from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
+from hackathon_assistant.use_cases.dto import (
+    ReminderEventDTO, 
+    ReminderParticipantDTO, 
+    ReminderPileDTO
+)
 
 logger = logging.getLogger(__name__)
-
 
 class ReminderService:
     def __init__(self, bot: Bot, use_case_provider_factory):
@@ -42,93 +44,87 @@ class ReminderService:
             logger.error(f"Reminder task error: {e}")
 
     async def send_upcoming_event_reminders(self):
-        logger.info("Checking for upcoming events (2h and 15min)...")
+        logger.info("Checking for upcoming events...")
         try:
             async with self.use_case_provider_factory() as use_cases:
                 hackathons = await use_cases.list_hackathons.execute(active_only=True)
                 
                 for hackathon in hackathons:
-                    events_by_interval = await self._get_events_for_reminders(
-                        use_cases, hackathon.id
+                    events_2h = await use_cases.get_upcoming_events.execute(
+                        hackathon_id=hackathon.id,
+                        minutes_ahead=120
                     )
                     
-                    for interval_minutes, events in events_by_interval.items():
-                        if events:
-                            await self._send_reminders_for_interval(
-                                use_cases, hackathon.id, events, interval_minutes
-                            )
-                            
+                    events_15min = await use_cases.get_upcoming_events.execute(
+                        hackathon_id=hackathon.id,
+                        minutes_ahead=15
+                    )
+                    
+                    if events_2h:
+                        await self._send_reminders_for_events(
+                            use_cases, hackathon.id, events_2h, 120
+                        )
+                    
+                    if events_15min:
+                        await self._send_reminders_for_events(
+                            use_cases, hackathon.id, events_15min, 15
+                        )
+                        
         except Exception as e:
             logger.error(f"Error in send_upcoming_event_reminders: {e}")
 
-    async def _get_events_for_reminders(self, use_cases, hackathon_id: int):
-        from datetime import datetime, timedelta
-        
+    async def _send_reminders_for_events(self, use_cases, hackathon_id: int, events: list, interval_minutes: int):
         try:
-            events = await use_cases.get_upcoming_events.execute(
+            if not events:
+                return
+            
+            participants = await self._get_hackathon_participants(use_cases, hackathon_id)
+            
+            if not participants:
+                logger.warning(f"No participants found for hackathon {hackathon_id}")
+                return
+            
+            reminder_piles = []
+            
+            for event in events:
+                reminder_event = ReminderEventDTO(
+                    event_id=event.id,
+                    title=event.title,
+                    starts_at=event.starts_at
+                )
+                
+                participant_dtos = [
+                    ReminderParticipantDTO(
+                        user_id=user.id,
+                        telegram_id=user.telegram_id
+                    )
+                    for user in participants
+                ]
+                
+                pile = ReminderPileDTO(
+                    event=reminder_event,
+                    participants=participant_dtos
+                )
+                reminder_piles.append(pile)
+            
+            if reminder_piles:
+                total_participants = sum(len(p.participants) for p in reminder_piles)
+                logger.info(f"Sending reminders for {len(reminder_piles)} events to {total_participants} users")
+                await use_cases.send_reminders.execute(reminder_piles)
+                
+        except Exception as e:
+            logger.error(f"Error sending reminders for events: {e}")
+
+    async def _get_hackathon_participants(self, use_cases, hackathon_id: int):
+        try:
+            hackathon_info = await use_cases.get_hackathon_info.execute(
                 hackathon_id=hackathon_id,
-                minutes_ahead=125
+                user_id=None
             )
             
-            if not events:
-                return {}
-            
-            now = datetime.now()
-            result = {
-                120: [],
-                15: []
-            }
-            
-            for event in events:
-                minutes_until_start = (event.starts_at - now).total_seconds() / 60
-                
-                if 119 <= minutes_until_start <= 121:
-                    result[120].append(event)
-                elif 14 <= minutes_until_start <= 16:
-                    result[15].append(event)
-            
-            return {k: v for k, v in result.items() if v}
+            return []
             
         except Exception as e:
-            logger.error(f"Error filtering events for reminders: {e}")
-            return {}
-
-    async def _send_reminders_for_interval(self, use_cases, hackathon_id: int, events: list, interval_minutes: int):
-        if not events:
-            return
-            
-        logger.info(f"Sending {interval_minutes}min reminders for {len(events)} events")
-        
-        try:
-            subscribed_users = await use_cases.get_subscribed_users.execute(hackathon_id)
-            
-            for event in events:
-                for user in subscribed_users:
-                    try:
-                        await self.send_reminder_to_user(user, event, interval_minutes)
-                    except Exception as e:
-                        logger.error(f"Failed to send reminder for event {event.id} to user {user.id}: {e}")
-                        
-        except Exception as e:
-            logger.error(f"Error sending reminders for interval {interval_minutes}: {e}")
-
-    async def send_reminder_to_user(self, user, event, minutes_before: int):
-        try:
-            from .formatters import format_reminder_message
-
-            message = format_reminder_message(event, minutes_before)
-            await self.bot.send_message(user.telegram_id, message, parse_mode="Markdown")
-            logger.info(f"Reminder sent to user {user.telegram_id} for event: {event.title}")
-
-        except TelegramBadRequest as e:
-            if "chat not found" in str(e).lower() or "bot was blocked" in str(e).lower():
-                logger.warning(f"User {user.telegram_id} not available: {e}")
-            else:
-                logger.error(f"Telegram error for user {user.telegram_id}: {e}")
-        except TelegramForbiddenError as e:
-            logger.warning(f"User {user.telegram_id} blocked the bot: {e}")
-        except ImportError as e:
-            logger.error(f"Format function not found: {e}")
-        except Exception as e:
-            logger.error(f"Failed to send reminder to user {user.telegram_id}: {e}")
-        
+            logger.error(f"Error getting hackathon participants: {e}")
+            return []
+    
