@@ -1,5 +1,7 @@
 import logging
 from dataclasses import dataclass
+from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
@@ -7,7 +9,14 @@ from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
 from .dto import ReminderPileDTO
 from .ports import Notifier
 
+_LOCAL_TZ = ZoneInfo("Europe/Moscow")
 logger = logging.getLogger(__name__)
+
+
+def _to_local(dt: datetime) -> datetime:
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=UTC)
+    return dt.astimezone(_LOCAL_TZ)
 
 
 @dataclass
@@ -22,7 +31,8 @@ class SendRemindersUseCase:
         total_failed = 0
 
         for pile in piles:
-            time_str = pile.event.starts_at.strftime("%H:%M")
+            local_dt = _to_local(pile.event.starts_at)
+            time_str = local_dt.strftime("%H:%M")
 
             text = (
                 f"🔔 *Напоминание*\n\n"

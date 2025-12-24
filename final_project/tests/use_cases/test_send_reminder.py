@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -85,7 +86,7 @@ class TestSendRemindersUseCase:
     @pytest.mark.asyncio
     async def test_send_reminders_message_format(self, use_case_send_reminder, mock_notifier):
         """Проверка формата сообщения"""
-        now = datetime.now()
+        now = datetime.now(UTC)
         pile = ReminderPileDTO(
             event=ReminderEventDTO(event_id=1, title="Важное собрание", starts_at=now),
             participants=[ReminderParticipantDTO(user_id=1, telegram_id=123)],
@@ -100,4 +101,4 @@ class TestSendRemindersUseCase:
         assert "Скоро событие" in text
         assert "Важное собрание" in text
         assert "🕐" in text
-        assert now.strftime("%H:%M") in text
+        assert now.astimezone(ZoneInfo("Europe/Moscow")).strftime("%H:%M") in text

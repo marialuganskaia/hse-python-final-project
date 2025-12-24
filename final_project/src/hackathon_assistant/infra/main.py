@@ -26,9 +26,7 @@ async def main() -> None:
     bot = Bot(token=settings.bot_token)
     dp = Dispatcher()
 
-    from sqlalchemy.ext.asyncio import AsyncSession
-
-    def provider_factory(session: AsyncSession):
+    def provider_factory(session):
         return build_use_case_provider(session=session, bot=bot)
 
     dp.update.outer_middleware(
@@ -54,7 +52,7 @@ async def main() -> None:
         try:
             from ..adapters.bot.reminders import ReminderService
 
-            reminder_service = ReminderService(bot, build_use_case_provider)
+            reminder_service = ReminderService(bot, provider_factory)
 
             if settings.reminders_enabled:
                 await reminder_service.start_periodic_reminders(
