@@ -31,7 +31,6 @@ class BroadcastStates(StatesGroup):
 async def cmd_admin_stats(message: types.Message, use_cases: UseCaseProvider) -> None:
     try:
         parts = message.text.split(maxsplit=1)
-        # hackathon_id = None
 
         if len(parts) > 1:
             hack_code = parts[1].strip()
@@ -41,7 +40,6 @@ async def cmd_admin_stats(message: types.Message, use_cases: UseCaseProvider) ->
             if not hackathon:
                 await message.answer(f"❌ Хакатон с кодом '{hack_code}' не найден.")
                 return
-            # hackathon_id = hackathon.id
 
         if not await is_organizer(message.from_user.id, use_cases):
             await message.answer("❌ Эта команда доступна только организаторам.")
@@ -85,18 +83,17 @@ async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider
             await message.answer("❌ Эта команда доступна только организаторам.")
             return
 
-        from hackathon_assistant.use_cases.send_broadcast import SendBroadcastRequest
-
-        request = SendBroadcastRequest(hackathon_id=hackathon.id, message=broadcast_message)
-
-        targets_response = await use_cases.send_broadcast.execute(request)
-        targets = targets_response.targets
-        sent_count = 0
-        failed_count = 0
+        targets = await use_cases.send_broadcast.execute(
+            hackathon_id=hackathon.id,
+            message=broadcast_message,
+        )
 
         await message.answer(
             f"🔄 Рассылка для хакатона: {hackathon.name} ({len(targets)} получателей)"
         )
+
+        sent_count = 0
+        failed_count = 0
 
         for target in targets:
             try:
@@ -106,28 +103,16 @@ async def cmd_admin_broadcast(message: types.Message, use_cases: UseCaseProvider
                 sent_count += 1
 
             except Exception as e:
-                logger.error(f"Failed to send to {target.telegram_id}: {e}")
+                logger.exception("Failed to send to %s: %r", target.telegram_id, e)
                 failed_count += 1
 
         result_text = format_broadcast_result(
             sent=sent_count, failed=failed_count, total=len(targets)
         )
-        await message.answer(f"🔄 Начинаю рассылку для хакатона: {hackathon.name}")
-
-        result = await use_cases.send_broadcast.execute(
-            hackathon_id=hackathon.id, message=broadcast_message
-        )
-
-        result_text = format_broadcast_result(
-            sent=result.sent_count,
-            failed=result.failed_count,
-            total=result.sent_count + result.failed_count,
-        )
-
         await message.answer(result_text, parse_mode="Markdown")
 
     except Exception as e:
-        logger.error(f"Error in /admin_broadcast: {e}")
+        logger.exception("Error in /admin_broadcast: %r", e)
         await message.answer("❌ Ошибка при отправке рассылки.")
 
 
