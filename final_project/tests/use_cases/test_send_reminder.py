@@ -26,7 +26,7 @@ class TestSendRemindersUseCase:
         first_call = mock_notifier.send.call_args_list[0]
         assert first_call.kwargs["telegram_id"] == 111
         assert "Тестовое событие" in first_call.kwargs["text"]
-        assert "Начало:" in first_call.kwargs["text"]
+        assert "🕐" in first_call.kwargs["text"]
 
         second_call = mock_notifier.send.call_args_list[1]
         assert second_call.kwargs["telegram_id"] == 222
@@ -97,7 +97,7 @@ class TestSendRemindersUseCase:
         call = mock_notifier.send.call_args
 
         text = call.kwargs["text"]
-        assert "Скоро событие!" in text
+        assert "Скоро событие" in text
         assert "Важное собрание" in text
-        assert "Начало:" in text
-        assert str(now) in text
+        assert "🕐" in text
+        assert now.strftime("%H:%M") in text

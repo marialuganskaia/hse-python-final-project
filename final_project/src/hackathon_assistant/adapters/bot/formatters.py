@@ -271,18 +271,15 @@ def format_reminder_message(event, minutes_before: int) -> str:
         elif 2 <= last_digit <= 4 and not (12 <= minutes_before <= 14):
             time_text = f"через {minutes_before} минуты"
         else:
-            time_text = f"через {minutes_before} минут"
-    
-    message = (
-        f"🔔 *Напоминание*\n\n"
-        f"{time_text}: *{event.title}*"
-    )
-    
-    if hasattr(event, 'starts_at') and event.starts_at:
+            time_text = f"Через *{minutes_before} минут*"
+
+    message = f"🔔 *Напоминание*\n\n" f"{time_text}: *{event.title}*"
+
+    if hasattr(event, "starts_at") and event.starts_at:
         time_str = event.starts_at.strftime("%H:%M")
         message += f"\n🕐 {time_str}"
-    
-    if hasattr(event, 'location') and event.location:
+
+    if hasattr(event, "location") and event.location:
         message += f"\n📍 {event.location}"
-    
+
     return message

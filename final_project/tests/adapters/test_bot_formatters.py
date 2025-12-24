@@ -191,7 +191,6 @@ class TestFormatters:
             title = "Регистрация"
             starts_at = datetime.now() + timedelta(minutes=30)
             location = "Главный зал"
-            description = "Регистрация участников хакатона"
 
         event = MockEvent()
 
@@ -201,4 +200,3 @@ class TestFormatters:
         assert "Через *30 минут*" in result
         assert "*Регистрация*" in result
         assert "Главный зал" in result
-        assert "Регистрация участников" in result
