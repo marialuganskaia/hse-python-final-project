@@ -26,10 +26,12 @@ async def main() -> None:
     bot = Bot(token=settings.bot_token)
     dp = Dispatcher()
 
+    provider_factory = lambda session: build_use_case_provider(session=session, bot=bot)
+
     dp.update.outer_middleware(
         UseCasesMiddleware(
             session_cm_factory=get_session,
-            provider_factory=build_use_case_provider,
+            provider_factory=provider_factory,
             data_key="use_cases",
         )
     )
